@@ -12,7 +12,7 @@ categories:
 tags:
       - [Module, Modularization, Argparse]
 
-Permarlink: /FAM/Modularization
+permalink: /FAM/Modularization
 
 toc: true
 toc_sticky: true

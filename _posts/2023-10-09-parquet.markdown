@@ -10,7 +10,7 @@ categories:
 tags:
       - [Data Format, Parquet]
 
-Permarlink: /FAM/Parquet
+permalink: /FAM/Parquet
 
 toc: true
 toc_sticky: true
