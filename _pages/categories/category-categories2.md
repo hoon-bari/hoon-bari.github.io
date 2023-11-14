@@ -1,5 +1,5 @@
 ---
-title: "Categories2"
+title: "Time Series"
 layout: category
 permalink: /categories/categories2/
 author_profile: true
