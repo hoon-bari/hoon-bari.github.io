@@ -5,12 +5,12 @@ excerpt:
   csv에 비해서 parquet파일은 용량이 대체로 큰데, 이 parquet가 어떤 데이터 형식이며 어떤 경우에 사용이 되는지 알아보겠습니다."
 
 categories:
-      - categories4
+      - For AI Modeling
 
 tags:
       - [Data Format, Parquet]
 
-Permarlink: /categories4/Parquet
+Permarlink: /FAM/Parquet
 
 toc: true
 toc_sticky: true

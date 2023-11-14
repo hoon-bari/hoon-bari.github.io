@@ -4,12 +4,12 @@ excerpt:
   "머신러닝 분야는 모델 구축만큼이나 성능평가도 중요합니다. 추천시스템 또한 머신러닝의 비지도학습에 속하기 때문에, 성능평가가 중요합니다. 그래서 추천시스템에는 Recall/Precision@k, MAP@k, NDCG@k 등 다양한 성능평가지표가 존재합니다. 이번 포스팅에서는 이러한 추천시스템의 평가지표에 대해 살펴보도록 하겠습니다."
 
 categories:
-      - categories1
+      - Recommender System
 
 tags:
       - [Recommendation, Evaluation]
 
-Permarlink: /categories4/Recomender_evaluation
+Permarlink: /RS/Recomender_evaluation
 
 toc: true
 toc_sticky: true

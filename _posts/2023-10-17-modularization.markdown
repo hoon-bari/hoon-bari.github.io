@@ -7,12 +7,12 @@ excerpt:
   오늘은 이러한 파일을 모듈화 후 패키징하는 과정을 포스팅해보도록 하겠습니다."
 
 categories:
-      - categories4
+      - For AI Modeling
 
 tags:
       - [Module, Modularization, Argparse]
 
-Permarlink: /categories4/Parquet
+Permarlink: /FAM/Modularization
 
 toc: true
 toc_sticky: true
