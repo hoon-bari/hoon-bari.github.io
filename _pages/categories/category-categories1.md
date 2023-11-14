@@ -1,9 +1,9 @@
 ---
 title: "Recommender System"
 layout: category
-permalink: /categories/categories1/
+permalink: /categories/recommender_system/
 author_profile: true
-taxonomy: Categories1
+taxonomy: Recommender System
 sidebar:
   nav: "categories"
 ---

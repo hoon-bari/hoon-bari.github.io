@@ -47,7 +47,7 @@ parquet는 column기반으로 저장되는데, 이를 통해 복잡한 대량 �
 
 ---
 
-![ROD vs COD](https://github.com/hoon-bari/hoon-bari.github.io/assets/121400054/8bd31950-25c5-4602-8971-1da12d04c1ce)
+![parquet 이미지](https://github.com/hoon-bari/DACON_Medicine/assets/121400054/4862b5e9-23c9-4e91-aa06-70551bb69c29)
 <br>
 <br>
 행 기반 데이터베이스는 전통적인 데이터베이스로 데이터 저장 순서를 행 순서로 저장합니다.  

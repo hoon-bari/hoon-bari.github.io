@@ -1,9 +1,9 @@
 ---
 title: "Other Post"
 layout: category
-permalink: /categories/categories4/
+permalink: /categories/other_post/
 author_profile: true
-taxonomy: Categories4
+taxonomy: Other Post
 sidebar:
   nav: "categories"
 ---

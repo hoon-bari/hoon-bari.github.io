@@ -1,9 +1,9 @@
 ---
 title: "Time Series"
 layout: category
-permalink: /categories/categories2/
+permalink: /categories/time_series/
 author_profile: true
-taxonomy: Categories2
+taxonomy: Time Series
 sidebar:
   nav: "categories"
 ---

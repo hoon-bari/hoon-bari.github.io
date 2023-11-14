@@ -19,7 +19,7 @@ last_modified_at: 2023-10-30
 
 use_math : true
 ---
-![thumbnail](https://github.com/hoon-bari/hoon-bari.github.io/assets/121400054/97c23461-699e-452e-bc5e-475cfee70340)
+![추천시스템 썸네일](https://github.com/hoon-bari/DACON_Medicine/assets/121400054/49ac6907-8597-4413-b932-1bf061a40996)
 
 추천시스템은 정보 필터링 기술의 일종으로,  
 특정 사용자가 관심을 가질만한 정보(영화, 음악, 책, 뉴스, 이미지, 공고 등)을 추천하는 것입니다.  

@@ -21,7 +21,7 @@ date: 2023-10-17
 last_modified_at: 2023-10-17
 ---
 
-![modularization_thumbnail](https://github.com/hoon-bari/hoon-bari.github.io/assets/121400054/fbe74f61-a92c-448f-96c5-f2940d52951d)
+![모듈화 썸네일](https://github.com/hoon-bari/DACON_Medicine/assets/121400054/8a1004a8-3c3f-4450-907f-aa1d17eb06eb)
 
 Github에 올라온 각종 코드들을 보면 (파이썬을 기준으로) jupyter 파일로 된 코드도 많지만,  
 보통 py파일로 각 함수로 나눠진 모듈화된 파일들이 올려진 것을 볼 수 있습니다.  
