@@ -1,9 +1,9 @@
 ---
-title: "Other Post"
+title: "For AI Modeling"
 layout: category
-permalink: /categories/other_post/
+permalink: /categories/FAM/
 author_profile: true
-taxonomy: Other Post
+taxonomy: For AI Modeling
 sidebar:
   nav: "categories"
 ---

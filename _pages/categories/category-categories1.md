@@ -1,7 +1,7 @@
 ---
 title: "Recommender System"
 layout: category
-permalink: /categories/recommender_system/
+permalink: /categories/RS/
 author_profile: true
 taxonomy: Recommender System
 sidebar:

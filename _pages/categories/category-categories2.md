@@ -1,7 +1,7 @@
 ---
 title: "Time Series"
 layout: category
-permalink: /categories/time_series/
+permalink: /categories/TS/
 author_profile: true
 taxonomy: Time Series
 sidebar:

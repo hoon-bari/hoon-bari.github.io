@@ -9,7 +9,7 @@ categories:
 tags:
       - [Recommendation, Evaluation]
 
-Permalink: /RS/Recomender_evaluation
+permalink: /RS/Recommender_evaluation
 
 toc: true
 toc_sticky: true
