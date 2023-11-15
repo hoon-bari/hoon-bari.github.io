@@ -217,7 +217,6 @@ plugins:
   - jekyll-paginate
   - jekyll-sitemap
   - jekyll-gist
-  - jekyll-sitemap
   # - jekyll-feed
   - jekyll-include-cache
 
