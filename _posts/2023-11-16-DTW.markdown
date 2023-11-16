@@ -1,5 +1,5 @@
 ---
-title: "DTW(Dinamic Time Warping)"
+title: "DTW(Dynamic Time Warping)"
 excerpt:
   "뇌과학연구실에서 일할 때, 서로 다른 뇌파 인식 기기가 측정한 뇌파의 시간 차이를 계산하기 위해 DTW라는 알고리즘을 사용한 적이 있습니다. 오늘은 이 DTW에 대해 포스팅해보도록 하겠습니다."
 
