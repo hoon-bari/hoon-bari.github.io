@@ -15,15 +15,17 @@ $indent-var: 0.7lem !default;
 /* system typefaces */
 $serif: Georgia, Times, serif !default;
 /* 2022.01.19 font change */
-$sans-serif: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 
-"Pretendard", "Montserrat", "Merriweather", sans-serif !default;
+$sans-serif: "Godo", sans-serif !default;
+// -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 
+// "Pretendard", "Montserrat", "Merriweather", sans-serif !default;
 $monospace: "Fira Mono", "Pretendard", Monaco, Consolas, "Lucida Console", monospace !default;
 
 
 /* sans serif typefaces */
 $sans-serif-narrow: $sans-serif !default;
 $helvetica: Helvetica, "Helvetica Neue", Arial, sans-serif !default;
-$menufont: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', "Montserrat", "BioRhyme", "Pretendard", sans-serif !default;
+$menufont: "Godo", sans-serif !default;
+// -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', "Montserrat", "BioRhyme", "Pretendard", sans-serif !default;
 
 
 /* serif typefaces */
