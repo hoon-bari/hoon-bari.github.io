@@ -149,7 +149,7 @@ $ i=j=0 $ 에서 시작하여 k번째 와핑 거리 $ W_k $ 의
 <br>
 
 자세한 계산 과정을 보고싶으신 분들은  
-syj9700님의 블로그[reference ③](https://syj9700.tistory.com/58)를 참고 바랍니다.  
+syj9700님의 블로그 [\[reference ③\]](https://syj9700.tistory.com/58)를 참고 바랍니다.  
 
 ---
 ### 3. dtw-python
