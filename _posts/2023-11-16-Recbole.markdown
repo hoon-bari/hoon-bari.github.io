@@ -1,0 +1,21 @@
+---
+title: "Recbole"
+excerpt:
+  "오늘은 추천시스템 라이브러리인 Recbole에 대해 알아보겠습니다."
+
+categories:
+      - Recommender System
+
+tags:
+      - [Recbole, General, Sequential, Context-aware, Knowledge-based]
+
+permalink: /RS/Recbole
+
+toc: true
+toc_sticky: true
+
+date: 2023-11-16
+last_modified_at: 2023-11-16
+
+use_math : true
+---

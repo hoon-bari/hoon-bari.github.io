@@ -1,0 +1,280 @@
+---
+title: "DTW(Dinamic Time Warping)"
+excerpt:
+  "뇌과학연구실에서 일할 때, 서로 다른 뇌파 인식 기기가 측정한 뇌파의 시간 차이를 계산하기 위해 DTW라는 알고리즘을 사용한 적이 있습니다. 오늘은 이 DTW에 대해 포스팅해보도록 하겠습니다."
+
+categories:
+      - Time Series
+
+tags:
+      - [DTW, Time Series Length Comparison, Comparison of Time Differences]
+
+permalink: /TS/DTW
+
+toc: true
+toc_sticky: true
+
+date: 2023-11-16
+last_modified_at: 2023-11-16
+
+use_math : true
+---
+![뇌파 썸네일](https://github.com/hoon-bari/comments/assets/121400054/ea453f0a-dade-4b8a-ac01-f944648af102)
+<center style="font-size: 13px;">[출처 : AI hub]</center>
+<br>
+
+뇌파 데이터는 전형적인 시계열 데이터입니다.  
+x축은 뇌의 각 영역을 담당하는 부분에 꽂는 각 전극을 나타내고, y축은 측정 시간을 나타냅니다.   
+시간이 흐르면서 전극에 해당하는 뇌 자극(뇌파)가 달라지는 것을 볼 수 있습니다.  
+  
+이러한 뇌파를 측정하는 기기가 전부 통일되어있다면 좋겠지만,  
+아쉽게도 의료기기 회사는 많고 그에 따라 뇌파 측정기기도 많습니다.  
+그리고 침습적인 기기(뇌에 직접 전극을 꽂는 경우)와 비침습적인 기기도 있습니다.  
+이렇게 다양한 기기로 뇌파를 측정했을 때, 같은 전극으로, 같은 시간에 측정한 뇌파가 같을까요?  
+  
+같으면 얼마나 좋겠냐만 사실 어느 정도 차이가 나긴 합니다.  
+자극의 강도가 다른 경우도 있고, 비슷한 패턴이지만 시간차(shift)가 나는 경우도 있습니다.  
+이렇게 차이가 나는 뇌파 데이터가 있을 때, 어떻게 두 데이터가 유사한지 비교할 수 있을까요?  
+이럴 때 DTW를 사용합니다.  
+
+---
+### 1. DTW(Dynamic Time Warping)
+---
+
+#### 1\) DTW란?
+
+DTW는 Dynamic Time Warping이라고 하며, 한글로는 동적 시간 워핑이라고 합니다.  
+**다른 길이를 가진 두 개의 배열 또는 시계열 데이터**의 거리를 계산하거나,  
+유사도를 비교하기 위해 사용합니다.
+  
+예를 들어, 아래와 같은 배열이 있다고 해보겠습니다.
+
+```python
+a = [1, 2, 3]
+b = [3, 2, 2]
+```
+
+거리를 어떻게 계산할까요? 그냥 각 위치에 해당하는 값들을 유클리디안 거리로 계산하던지,  
+아니면 맨해튼 거리 등으로 계산하면 됩니다.  
+
+그러면 아래와 같이, 다른 길이를 가진 배열은 어떻게 계산해야할까요?  
+
+```python
+a = [1, 2, 3]
+b = [2, 2, 2, 3, 4]
+```
+
+각각의 값을 어디에, 어떻게 매치해야 할까요? 이러한 문제를 풀기 위해 DTW가 등장하게 됐습니다.  
+  
+<br>
+
+#### 2\) DTW vs Euclidean Distance
+
+DTW와 유클리디안의 차이는 위 배열과 비교해서보면 유클리디안은 1대1의 관계를 비교하지만,  
+DTW는 1대다의 관계 비교를 허용하여 그것들 사이의 왜곡을 이용해 거리를 계산한다는 점입니다.  
+계산을 하며 거리가 최소화되는 방향으로 매칭시켜서,  
+누적 거리가 최소가 되는 warping 경로를 찾습니다.  
+아래 그림은 유클리디안 거리와 DTW의 대표적인 차이를 보여줍니다.  
+
+![DTW vs Euclidean](https://github.com/hoon-bari/comments/assets/121400054/534d0bf1-3096-4229-80a7-b91294e4079e)
+<center style="font-size: 13px;"> [출처 : https://medium.com/mlearning-ai/what-is-dynamic-time-warping-253a6880ad12] </center>
+
+<br>
+
+특히 유클리디안 거리는 같은 시간선상에 대해 거리를 계산하게 되는데,  
+이렇게 되면 예를 들어 뇌파와 같이 신호의 떨림과 움직임이 심한 데이터에서는  
+유사성을 찾기가 힘들게 되며, 길이가 다른 시계열은 측정할 수 없다는 단점이 있습니다.  
+반면 DTW는 위와 같은 경우에도 거리 계산이 가능합니다.
+  
+예시를 하나 들어보겠습니다. 여기서는 2개의 길이가 같지만 값이 다른 시계열을 한번 보겠습니다.  
+
+```python
+A = [1, 3, 4, 9, 8, 2, 1, 5, 7, 3]
+B = [1, 6, 2, 3, 0, 9, 4, 3, 6, 3]
+```
+
+![DTW-TS](https://github.com/hoon-bari/comments/assets/121400054/f362f9b7-52df-4ef2-b089-3f9fe135c160)
+<center style="font-size: 13px;"> [출처 : https://medium.com/mlearning-ai/what-is-dynamic-time-warping-253a6880ad12] </center>
+
+<br>
+
+이 시계열을 나열하여, $\text{length}(A), \text{length}(B)$ 행렬을 만듭니다.  
+이 행렬의 $(i, j)$ 번째 요소는 두 점 $ \text{A}{_i}, \text{B}{_j} $ 간의 유클리드 거리 $ (A_i - B_j)^2 $ 를 의미하며,  
+이를 이용하여 최적의 와핑 경로를 탐색합니다.  
+이 때 와핑 경로 W는 Q와 C사이의 mapping을 나타내는 와핑 거리의 집합이며,  
+연속적이어야 합니다.
+
+<center> $ W = \{ w_1, w_2, \cdots, w_K \}, \quad \max(m, n) \leq K < m + n - 1 $ </center>
+
+W에서 k번째 요소는 $ W_k = (i, j)_k $ 로 정의되며, 이를 와핑 거리라고 합니다.  
+이 때 W는 다음의 3가지 조건을 만족해야합니다.  
+
+1. Boundary Conditions : $ W_1 = (1, 1) $ 과 $ W_k = (m, n) $ 는 이어져야합니다.  
+   즉, 시작점과 끝점은 $ W_1 = (1, 1) $ 과 $ W_k = (m, n) $ 이어야합니다.  
+
+2. Continuity : $ W_k = (a, b) $ 와 $ W_k = (a', b') $ 에서  
+   $ a - a' ≤ 1 $ , $ b - b' ≤ 1 $ 이어야합니다.  
+   즉, 와핑 경로는 대각 요소를 포함한 인접한 셀로 제한됩니다.  
+
+3. monotonicity : $ W_k = (a, b) $ 와 $ W_k = (a', b') $ 에서  
+   $ a - a' ≥ 0 $ , $ b - b' ≥ 0 $ 이어야합니다.  
+   즉, 와핑 경로는 음의 방향으로 이동하지 않습니다.
+
+<br>
+
+위의 3가지 조건을 만족하는 와핑 경로들 중에서 와핑 거리 $ W_k $ 들의 총합이  
+최소가 되는 경로를 찾는 것이 목적입니다.  
+이것을 와핑 경로 비용(warping path cost)라고 부르기도 하며,  
+와핑 경로 비용이 최소가 되는 경로를 찾는 것과 같습니다.
+
+<center> $ DTW(Q, C) = \min \left\{ \frac{1}{K} \sqrt{\sum_{k=1}^{K} w_k} \right\} $ </center>
+
+여기서, K는 서로 다른 길이를 가지고 있는 와핑 경로들에 대한 보상을 위해 사용됩니다.  
+$ i=j=0 $ 에서 시작하여 k번째 와핑 거리 $ W_k $ 의  
+누적 와핑 거리 $ D(i, j) $ 는 아래 식으로 정의 될 수 있습니다.  
+
+<center> $ D(i, j) = d(q_i, c_j) + \min \left\{ D(i-1, j-1), D(i-1, j), D(i, j-1) \right\} $ </center>
+
+식의 의미는 \[i번째 요소와 j번째 요소의 거리\]   
+\+ \[\(i, j \)번째 요소의 거리에 인접한 셀까지의 누적거리 중 최솟값\]으로  
+결국 최단 거리 방향으로 진행하는 것을 의미합니다.  
+누적 와핑 거리 $ D(i, j) $ 는 $ i = j = 0 $ 에서부터 시작하며,  
+최종적인 유사도를 나타내는 값은 위의 $ DTW(Q, C) $ 의 값과 같게 됩니다.  
+
+위와 같은 방법을 이용하여 A, B의 DTW를 수행하면 아래와 같은 결과가 나옵니다.  
+
+![DTW(2)](https://github.com/hoon-bari/comments/assets/121400054/f3382a02-ffcb-48d7-ad2f-8f3423b5bc6a)
+<center style="font-size: 13px;"> [출처 : https://medium.com/mlearning-ai/what-is-dynamic-time-warping-253a6880ad12] </center>
+
+<br>
+
+자세한 계산 과정을 보고싶으신 분들은  
+syj9700님의 블로그[reference ③](https://syj9700.tistory.com/58)를 참고 바랍니다.  
+
+---
+### 3. dtw-python
+---
+
+DTW 알고리즘은 직접 구현할 수도 있고 다양한 라이브러리를 이용할 수도 있습니다.  
+여기서는 python으로 dtw를 사용하는 방법에 대해 알아보겠습니다.  
+fastdtw, dtw-python 등의 라이브러리가 있는데, dtw-python에 대해 소개해드리려 합니다.
+
+R에서 dtw라이브러리를 만들었던 개발자 분이, python 버전에 맞게 구현한 것입니다.  
+공식 홈페이지는 [dtw-python](https://dynamictimewarping.github.io/python/) 링크를 클릭하여 들어가시면 됩니다.  
+
+pypl로 설치가 가능하며, 아래 코드를 입력하시면 됩니다.  
+
+```python
+pip install dtw-python
+```
+<br>
+
+import의 경우 아래 두 가지 모두 가능한데,  
+첫 번째는 dtw 클래스 내 함수들을 불러올 때 dtw.dtw 등으로 불러와야해서    
+그냥 두 번째 거로 불러오시기를 추천합니다.  
+
+```python
+import dtw
+from dtw import *
+```
+<br>
+
+보통 dtw는 아래와 같이 계산합니다.
+
+```python
+def calculate_dtw(series1, series2):
+    # DTW 유사도 계산
+    dtw_result = dtw(series1, series2, keep_internals=True)
+    return dtw_result
+
+dtw_result = calculate_dtw(df1[row1], df2[row1], keep_internals=True)    
+```
+
+여기서는 데이터프레임에서 시리즈를 가져와서 계산하도록 함수를 만들어놨는데,  
+numpy 배열을 가져와도 됩니다.  
+fastdtw는 dtw-python과 다르게 일반적으로 numpy 배열을 받는걸로 알고있습니다.  
+
+또한 keep_internals는 DTW 계산 과정에서 생성되는 내부 정보를 보존하고 반환합니다.  
+이 정보는 시각화나 분석에 이용됩니다.  
+
+<br>
+
+위에서 얻은 dtw_result를 이용해 다양한 정보를 얻을 수 있습니다.  
+
+```python
+dtw_result.path
+dtw_result.distance
+dtw_result.plot(type="threeway") # twoway...
+```
+
+여기서 얻은 distance가,  
+우리가 흔히 말하는 DTW를 통해 얻은 두 시계열(배열)간 거리 / 유사도를 의미합니다.  
+그리고 path는 위 행렬 그림에서, 짙게 칠해진 그림에 해당하는 부분을 말합니다.  
+마지막으로 plot은 두 시계열(배열)의 차이를 그림으로 보여줍니다.  
+threeway, twoway 등 다양한 형태로 볼 수 있습니다.  
+
+<br>
+
+만약 국내 어느 농산물의 일간 가격 데이터가 있고,  
+수입 농산물의 월간 가격 데이터가 있을 때 그 둘 간의 유사도를 계산하고 싶다면   
+아래와 같이, 반복문을 이용해서 계산하면 됩니다.  
+
+```python
+# 결과를 저장할 리스트
+results = []
+
+# 국내 데이터에 대한 반복문
+for domestic_product in monthly_avg_df['item_id'].unique():
+    domestic_price_data = monthly_avg_df[monthly_avg_df['item_id'] == domestic_product]['scaled_price']
+    domestic_supply_data = monthly_avg_df[monthly_avg_df['item_id'] == domestic_product]['scaled_supply']
+
+    # 수입 데이터에 대한 유사도 계산
+    for international_product in import_price_df.columns:
+        # 수입 가격 데이터와의 유사도
+        international_price_data = import_price_df[international_product]
+        dtw_distance_price = calculate_dtw(domestic_price_data, international_price_data)
+        results.append({'domestic_product': domestic_product, 'international_product': international_product, 'type': 'import', 'metric': 'price', 'distance': dtw_distance_price})
+```
+
+다만 이렇게 반복문을 이용해서 계산하면, DTW를 실행하는데 꽤나 긴 시간이 걸리게 됩니다.  
+즉, DTW는 두 시계열(배열) 간의 유사도를 구하는데는 유리하지만,  
+다수의 시계열 간 유사도를 구할 때는 시간이 오래 걸린다는 단점이 있습니다.  
+이러한 단점을 극복하기 위해 다양한 알고리즘이 보완되어 나왔는데,  
+그것은 다음에 포스팅해보도록 하겠습니다.  
+
+---
+### 4. DTW가 사용되는 분야
+---
+
+DTW는 굉장히 많은 분야에서 활용이 되고 있습니다.  
+제가 서두에 언급했던 뇌파 간의 시간 차나 유사도를 계산하는 것과 같이  
+의료분야에서는 생체신호 분석에 주로 이용되며  
+또한 두 사람의 보행 유사성을 계산하는데 사용이 됩니다.  
+
+![DTW(보행)](https://github.com/hoon-bari/comments/assets/121400054/ed94a3b4-822e-4e26-81aa-06fa445ffec5)
+<center style="font-size: 13px;"> [출처 : https://en.wikipedia.org/wiki/Dynamic_time_warping] </center>
+
+또한 그래픽, 비디오, 오디오와 같은 분야에서 사용되며  
+특히 다른 속도를 가지는 음성을 인식하도록 하는 등,  
+자동음성 인식 분야에서 두각을 보이고 있습니다.  
+
+우리가 사용하는 시리, 빅스비 등의 AI가 수많은 사람의 다양한 음성을 문제없이  
+인식하는 이유도, 이 DTW에 있습니다.
+
+그리고 비슷한 분야나 다른 분야의 주식 가격 움직임을 비교하기 위해  
+DTW가 사용되고 있습니다.
+
+---
+### 5. 정리
+---
+
+오늘은 DTW(Dynamic Time Warping)에 대해 포스팅을 해봤습니다.  
+다음에는 다수의 시계열 유사도를 비교할 때 어떤 알고리즘을 사용하는지에 대해  
+포스팅 해보도록 하겠습니다.  
+
+
+#### References
+[① https://towardsdatascience.com/dynamic-time-warping-3933f25fcdd](https://towardsdatascience.com/dynamic-time-warping-3933f25fcdd)  
+[② https://medium.com/mlearning-ai/what-is-dynamic-time-warping-253a6880ad12](https://medium.com/mlearning-ai/what-is-dynamic-time-warping-253a6880ad12)  
+[③ https://syj9700.tistory.com/58](https://syj9700.tistory.com/58)  
+[④ https://dynamictimewarping.github.io/python/](https://dynamictimewarping.github.io/python/)  
