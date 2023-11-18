@@ -255,6 +255,8 @@ DTW는 굉장히 많은 분야에서 활용이 되고 있습니다.
 ![DTW(보행)](https://github.com/hoon-bari/comments/assets/121400054/ed94a3b4-822e-4e26-81aa-06fa445ffec5)
 <center style="font-size: 13px;"> [출처 : https://en.wikipedia.org/wiki/Dynamic_time_warping] </center>
 
+<br>
+
 또한 그래픽, 비디오, 오디오와 같은 분야에서 사용되며  
 특히 다른 속도를 가지는 음성을 인식하도록 하는 등,  
 자동음성 인식 분야에서 두각을 보이고 있습니다.  
@@ -273,6 +275,7 @@ DTW가 사용되고 있습니다.
 다음에는 다수의 시계열 유사도를 비교할 때 어떤 알고리즘을 사용하는지에 대해  
 포스팅 해보도록 하겠습니다.  
 
+<br>
 
 #### References
 [① https://towardsdatascience.com/dynamic-time-warping-3933f25fcdd](https://towardsdatascience.com/dynamic-time-warping-3933f25fcdd)  

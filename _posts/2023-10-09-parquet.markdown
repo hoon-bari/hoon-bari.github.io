@@ -19,8 +19,10 @@ date: 2023-10-09
 last_modified_at: 2023-11-16
 
 ---
+![Apache_Parquet_logo](https://github.com/hoon-bari/comments/assets/121400054/28a95a41-951f-480f-9dc3-b06401ae3dbf)
 
 <br>
+
 kaggle, dacon등 데이터 경진대회나 회사 등에서 업무 시 데이터를 정리할 때,  
 간혹 데이터 형식이 parquet로 되어있는 경우가 있습니다.  
 이 데이터 형식을 안다뤄본 분들은 생소할 것 같아, 정리해보기 위해 이 포스트를 작성했습니다.  

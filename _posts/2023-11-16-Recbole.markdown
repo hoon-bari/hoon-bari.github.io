@@ -1,21 +1,71 @@
 ---
 title: "Recbole"
 excerpt:
-  "대다수 모델은 스스로 구현해보는게 가장 좋지만, 많은 종류의 모델 중에 어떤 것을 어떻게 구현해야할지 고민이 되는 경우가 있습니다. 그래서 다수의 모델을 쉽게 사용하기 위해 모아놓은 라이브러리들이 있는데, 그 중 각종 추천시스템 모델을 구현해놓은 Recbole에 대해 알아보겠습니다."
+  "대다수 모델은 스스로 구현해보는게 가장 좋지만, 많은 종류의 모델 중에 어떤 것을 어떻게 구현해야할지 고민이 되는 경우가 있습니다. 그래서 다수의 모델을 쉽게 사용하기 위해 모아놓은 라이브러리들이 있는데, 오늘은 각종 추천시스템 모델을 구현해놓은 Recbole에 대해 알아보겠습니다."
 
 categories:
       - Recommender System
 
 tags:
-      - [Recbole, General, Sequential, Context-aware, Knowledge-based]
+      - [Recbole, 추천시스템, Recommender System]
 
 permalink: /RS/Recbole
 
 toc: true
 toc_sticky: true
 
-date: 2023-11-16
-last_modified_at: 2023-11-16
+date: 2023-11-17
+last_modified_at: 2023-11-17
 
 use_math : true
 ---
+<br>
+
+![recbole](https://github.com/hoon-bari/comments/assets/121400054/7bb11202-14ce-4384-9182-49c7a37ea88b)
+
+<br>
+
+---
+### 1. Recbole
+---
+
+Recbole은 2020년에 처음 나온 추천시스템 관련 라이브러리로,  
+SIGIR(Special Interest Group on Information Retrieval) 2023에  
+**'Towards a More User-Friendly and Easy-to-Use Benchmark Library for Recommender Systems'**  
+라는 이름으로 paper도 제출할만큼,  
+최근까지도 활발히 업데이트가 되어오고 있는 라이브러리 입니다.  
+  
+General, Sequential, Context-aware, Knowledge-based의 4가지 구분으로,  
+2023년 11월 현재 총 91가지의 모델과 43가지의 데이터셋을 제공하고 있습니다.  
+
+Recbole 공식 문서 링크는 옆에 있습니다. [**\[ Recbole 공식 홈페이지 \]**](https://recbole.io/) 
+
+<br>
+
+<img width="1440" alt="recbole2" src="https://github.com/hoon-bari/comments/assets/121400054/e45857c2-bb11-4254-9c1f-98df309ec01a">
+
+최근에 나온 모델들 부터,  
+
+<br>
+
+<img width="1440" alt="recbole3" src="https://github.com/hoon-bari/comments/assets/121400054/888fe0af-fb4f-47b1-aea9-a24f642e491a">
+
+이전부터 지속적으로 활용되어오고 있는 베이스 모델까지 다양하게 사용이 가능합니다.  
+다만 repository가 나뉘어 있는게 흠인데,  
+이것들을 사용하기 위해선 repository를 따로 clone하거나  
+기본 repository인 recbole에 함께 clone 후 수정하는 방법이 있습니다.  
+  
+저는 처음에 한꺼번에 관리하기 위해 clone 후 recbole 폴더 안에 집어넣었는데,  
+이렇게 하려고 하니 수정할게 한두가지가 아니어서,  
+Recbole-GNN만 Recbole이랑 통합하고 다른 폴더는 지워버렸습니다.  
+만약 모든 라이브러리를 사용하려 하시는 분이라면 따로 clone한 뒤에,  
+Dataset만 폴더에 넣어주시면 될 것 같습니다.  
+
+<br>
+
+---
+### 2. Install & Use
+---
+
+여기서는 clone해서 사용하는 법을 알아보겠습니다.  
+우선 설치하고자 하는 
