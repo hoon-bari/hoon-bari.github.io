@@ -67,5 +67,100 @@ Dataset만 폴더에 넣어주시면 될 것 같습니다.
 ### 2. Install & Use
 ---
 
+#### 1) Install
+
 여기서는 clone해서 사용하는 법을 알아보겠습니다.  
-우선 설치하고자 하는 
+우선 iTerm 등의 스크립트를 킨 후, clone하고자 하는 폴더로 이동합니다.  
+그 후 아래 코드를 입력해줍니다.  
+
+```python
+git clone https://github.com/RUCAIBox/RecBole.git && cd RecBole
+pip install -e . --verbose
+```
+
+이 부분은 기본적인 Recbole repository이고,  
+만약 여기에 GNN 모델이나 다른 부분을 추가해서 clone 하고 싶다면,  
+위 Recbole 폴더에서 아래처럼 원하는 모델이 있는 repository를 clone하면 됩니다.  
+
+```python
+https://github.com/RUCAIBox/RecBole-GNN.git
+```
+
+모델 repository에 대한 주소는 공식 문서나,  
+recbole github의 model에 repository라고 해서 구분되어 있습니다.  
+
+<br>
+
+<img width="1042" alt="recbole4" src="https://github.com/hoon-bari/comments/assets/121400054/c1ac6e73-f604-49b5-895a-7cbad1bef359">
+
+<br>
+
+
+#### 2) Dataset
+
+Recbole을 사용하기 위해 살펴봐야할 부분을 보겠습니다.  
+우선 첫 번째로 Dataset 부분입니다.  
+
+현재 Recbole에서는 다양한 Dataset을 제공하고 있습니다. [\[ Dataset 링크 \]](https://recbole.io/dataset_list.html)  
+하지만 우리가 원하는건 우리의 Dataset을 Recbole에 사용하고 싶은 것이기 때문에,  
+Recbole에 Dataset을 어떤 형식으로 입력하는지 살펴봐야합니다.  
+아래는 Recbole이 원하는 Atomic Files 형식입니다.  
+(Atomic Files에 대해서는 나중에 따로 다뤄보도록 하겠습니다.  
+DBMS와도 관련된 내용입니다.)
+
+<br>
+
+<img width="900" alt="Recbole5" src="https://github.com/hoon-bari/comments/assets/121400054/3533923c-1f5b-4f55-a7c5-bf6ad87cc78c">
+
+사용할 추천시스템에 따라 파일의 개수는 달라집니다.  
+interaction(상호작용) 파일은 필수로 있어야하고    
+그 외에 user나 item 정보를 가지고 있는 파일,  
+그 외에 knowledge graph 등의 파일을 입력할 수 있습니다.  
+
+<br>
+
+<img width="640" alt="recbole6" src="https://github.com/hoon-bari/comments/assets/121400054/aa54ab19-0c7a-4a9a-a3df-867a0587f438">
+
+
+Dataset 파일이 저장되는 경로는  
+'Recbole/dataset/파일 이름' 이렇게 지정하면 됩니다.  
+파일 형식은 tsv로 저장하는데,  
+특이하게 뒤에 파일명에 .inter, .item, .user 등으로 구분해서 저장해줍니다.  
+
+interaction 파일에서 살펴봐야할 부분은 user_id, item_id 등은 token으로,  
+rating, timestamp는 float으로 해서 데이터 형식을 명시해준다는 부분입니다.  
+이렇게 파일을 명시해줘야 dataset 파싱하는 코드 부분에서 데이터를 인식합니다.  
+token은 주로 categorical 변수에 적용되며  
+recbole 사용 시에 모델에 맞게 인덱스 변환되었다가,  
+나중에 validation이나 inference시에 원래 데이터에 맞게 바꿔주는 역할을 합니다.  
+
+만약에 나는 rating이 없는 implicit 상호작용 matrix를 inter파일로 이용하고 싶다고 하면,  
+아래처럼 그냥 label을 1로 해서 넣어주거나, 그냥 user_id, item_id만 넣어줘도 무방합니다.  
+(모델에 따라 입력 방식이 달라질 수 있으므로 항상 모델이 어떻게 데이터를 받는지 확인해야합니다.)  
+아래는 이번에 국민대학교와 데이콘에서 진행했던 추천시스템 경진대회 관련해서,  
+상호작용 matrix를 inter 파일로 변환한 부분입니다.  
+
+<img width="756" alt="recbole7" src="https://github.com/hoon-bari/comments/assets/121400054/c47b4811-4a89-4400-a21e-5c7bd1f6a6d9">
+
+<br>
+
+item, user 파일도 마찬가지로 파일 형식을 명시해서 넣어주면 되는데,  
+여러 단어로 되어있는 경우 token_seq라는 형식으로 넣어주게 됩니다.  
+
+<img width="796" alt="recbole8" src="https://github.com/hoon-bari/comments/assets/121400054/745329ef-7ea0-4e79-9f26-31ee6a3f797c">
+
+<br>
+
+
+#### 3) 다양한 config 파일
+
+또 하나 특이한 점은, config 파일이 상당히 여러가지로 구분이 되어있다는 점입니다.  
+Dataset에 대한 config파일, 전반적인 모델 사용에 대한 config파일,  
+모델에 대한 config파일 등등... 하나씩 살펴보겠습니다.  
+참고로 config 파일들은 yaml 파일로 되어있으며, 대부분 properties 폴더에 있습니다.  
+
+**⓵ overall.yaml**
+
+overall.yaml은 다른 파생 recbole 라이브러리(recbole-GNN 등)에는 없고,  
+본 라이브러리(Recbole)에 있습니다.  
+

@@ -19,6 +19,7 @@ date: 2023-10-09
 last_modified_at: 2023-11-16
 
 ---
+
 ![Apache_Parquet_logo](https://github.com/hoon-bari/comments/assets/121400054/28a95a41-951f-480f-9dc3-b06401ae3dbf)
 
 <br>
@@ -107,7 +108,7 @@ parquet 파일을 읽어오기 위한 도구에는 여러가지가 있는데,
 **Pandas에서도 to_parquet으로 to_csv와 같이 parquet 파일을 읽어올 수 있습니다.**  
 <br>
 
-```Python
+```python
 parquet_df = pd.to_parquet('your/file_path')
 ```
 

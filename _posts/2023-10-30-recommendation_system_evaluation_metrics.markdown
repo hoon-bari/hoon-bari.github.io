@@ -145,7 +145,7 @@ Precision이 예측값을 기준으로 둔다면, Recall은 실제값을 기준�
 
 #### 3\) Precision@k / Recall@k 예시
 
-예를 들어 아래와 같은 예시가 있다면, Precision@5와 Recall@5는 아래와 같이 됩니다.
+예를 들어 아래와 같은 예시가 있다면, Precision@4와 Recall@5는 아래와 같이 됩니다.
 
 ![푸바오 추천(1)](https://github.com/hoon-bari/comments/assets/121400054/4cd96c14-c066-4524-abaf-011c4c37406b)
 
