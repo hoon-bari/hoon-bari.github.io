@@ -156,11 +156,241 @@ item, user 파일도 마찬가지로 파일 형식을 명시해서 넣어주면 
 
 또 하나 특이한 점은, config 파일이 상당히 여러가지로 구분이 되어있다는 점입니다.  
 Dataset에 대한 config파일, 전반적인 모델 사용에 대한 config파일,  
-모델에 대한 config파일 등등... 하나씩 살펴보겠습니다.  
-참고로 config 파일들은 yaml 파일로 되어있으며, 대부분 properties 폴더에 있습니다.  
+모델에 대한 config파일 등등... 이 부분들을 조절해야 학습이 원활하게 됩니다.  
+하나씩 살펴보겠습니다.  
+참고로 config 파일들은 대부분 yaml 파일로 되어있으며, properties 폴더에 있습니다.  
+
+<br>
 
 **⓵ overall.yaml**
 
 overall.yaml은 다른 파생 recbole 라이브러리(recbole-GNN 등)에는 없고,  
-본 라이브러리(Recbole)에 있습니다.  
+본 라이브러리(Recbole)에 있습니다. Properties 폴더에 들어가면 바로 보입니다.    
 
+<img width="960" alt="recbole9" src="https://github.com/hoon-bari/comments/assets/121400054/393fc4e1-a9db-4097-adbf-e92f916e4993">
+
+주로 빨간색 박스 부분의 하이퍼파라미터를 조절하게 되는데,  
+특히 배치사이즈 부분이 2048로 되어있어 이 부분을 조절해야 합니다.  
+(M2 맥북에어 CPU, 데이콘 데이터 기준 256으로 했는데 무리없이 돌아갔습니다.)
+
+하이퍼 파라미터에 대한 부분은 Recbole의 API Docs에 자세히 나와있습니다.  
+해당 부분을 링크 걸어 놓도록 하겠습니다.  
+
+[\[ Training Settings \]](https://recbole.io/docs/user_guide/config/training_settings.html) , [\[ Evaluation Settings \]](https://recbole.io/docs/user_guide/config/evaluation_settings.html)  
+
+참고로 저는 training에 거의 모든 데이터를 사용하기 위해 0.999로 해놓고  
+나머지를 0.001로 하였는데, mode 부분을 full로 하면 비율 상관없이 모든 데이터에 대해  
+validation 및 test를 진행합니다.  
+다만 아예 split 부분에서 validation이나 test를 0으로 놓아버리면,  
+mode를 full로 하더라도 validation 및 test score 기록이 안되며  
+향후 Inference 할 때 진행이 안될 수도 있습니다. 유의바랍니다.  
+
+<br>
+
+**⓶ Dataset.yaml**
+
+<img width="960" alt="recbole10" src="https://github.com/hoon-bari/comments/assets/121400054/7b454cbd-414d-47c5-bb53-727bcac348e6">
+
+위에서 tsv로 형식으로 되어있던,  
+.inter, .user, .item 등의 dataset파일에 대한 yaml파일입니다.  
+recbole, 혹은 recbole-gnn 등의 properties 폴더의 dataset 파일에 저장되어있습니다.  
+(혹은 custom dataset이라면 직접 파일을 만들어줘야합니다.)  
+주로 조절하는건 FILED, NEG_PREFIX, LOAD_COL 부분입니다.  
+여기서 학습에 사용할 column들을 조절할 수 있습니다.  
+이 부분도 공식 문서에 사용법이 자세하게 기술되어 있으므로, 링크 걸도록 하겠습니다.  
+[\[ Data Settings \]](https://recbole.io/docs/user_guide/config/data_settings.html)
+
+<br>
+
+**⓷ model.yaml**
+
+<img width="640" alt="recbole11" src="https://github.com/hoon-bari/comments/assets/121400054/b2880279-a6b9-4160-b404-58ee49932533">
+
+마지막으로 사용할 model들에 대한 yaml파일입니다.  
+recbole, 혹은 recbole-gnn 등의 properties 폴더의 model 파일에 저장되어있습니다.  
+사용하고자 하는 모델의 yaml파일을 수정하시면 됩니다.  
+저의 경우는 LightGCN 모델을 사용했어서, 해당 파일을 수정했습니다.  
+
+
+그 외에도 quick_start_config 등등의 파일이 있습니다.  
+파일 및 공식문서를 참고해서 하이퍼파라미터 튜닝 등을 할 수 있으니 참고바랍니다.  
+
+<br>
+
+---
+### 3. Training
+---
+
+이제 training을 진행해보겠습니다.  
+training은 Recbole폴더에서, 아래 코드를 통해 진행하면됩니다.
+
+```python
+python run_recbole.py --model='사용하고자 하는 모델', --dataset='사용하고자하는 데이터셋'
+python run_recbole_gnn.py --model='사용하고자 하는 모델', --dataset='사용하고자하는 데이터셋'
+...
+```
+
+실행을 하고나면 아래처럼 진행상황이 나오면서 학습이 진행됩니다.  
+
+<img width="1024" alt="recbole12" src="https://github.com/hoon-bari/comments/assets/121400054/f36b9c12-5706-4fa2-a7cf-5897c504308b">
+
+실행을 하면서, 가장 좋은 validation에 대한 모델은 saved 폴더에 저장됩니다.  
+나중에 saved 폴더에 있는 모델을 불러와서 inference하시면 됩니다.  
+
+<br>
+
+---
+### 4. Inference
+___
+
+training까지 해서 validation 및 test 점수를 확인했으면,  
+이제 전체 데이터셋에 대해 추천을 구현해주어야합니다.  
+
+각 모델의 py파일에 들어가면,  
+아래처럼 full_sort_predict라는 함수가 구현되어 있습니다.  
+
+```python
+# LightGCN.py 예시
+def full_sort_predict(self, interaction):
+      user = interaction[self.USER_ID]
+      if self.restore_user_e is None or self.restore_item_e is None:
+      self.restore_user_e, self.restore_item_e = self.forward()
+      # get user embedding from storage variable
+      u_embeddings = self.restore_user_e[user]
+
+      # dot with all item embedding to accelerate
+      scores = torch.matmul(u_embeddings, self.restore_item_e.transpose(0, 1))
+
+      return scores.view(-1)
+```
+
+모든 대상에 대해 예측값을 제공하기 때문에, 여기서 상위 k개를 정렬해서 가져오면 됩니다.  
+아래는 위 반환값에 대해, k개를 정렬해서 가져오는 run_inference.py 코드의 예시입니다.  
+
+```python
+# run_inference.py
+
+import argparse
+import torch
+import numpy as np
+import pandas as pd
+
+from recbole.quick_start import load_data_and_model
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model_path', '-m', type=str, default='saved/model.pth', help='name of models')
+    
+    args, _ = parser.parse_known_args()
+    
+    # model, dataset 불러오기
+    config, model, dataset, train_data, valid_data, test_data = load_data_and_model(args.model_path)
+    
+    # device 설정
+    device = config.final_config_dict['device']
+    
+    # user, item id -> token 변환 array
+    user_id2token = dataset.field2id_token['user_id']
+    item_id2token = dataset.field2id_token['item_id']
+    
+    # user-item sparse matrix
+    matrix = dataset.inter_matrix(form='csr')
+
+    # user id, predict item id 저장 변수
+    pred_list = None
+    user_list = None
+    
+    model.eval()
+    for data in test_data:
+        interaction = data[0].to(device)
+        score = model.full_sort_predict(interaction)
+        
+        rating_pred = score.cpu().data.numpy().copy()
+        user_id = interaction['user_id'].cpu().numpy()
+        
+        # 사용자가 상호작용한 아이템 인덱스를 가져옵니다.
+        interacted_indices = matrix[user_id].indices
+
+        # 상호작용한 아이템의 점수를 0으로 설정합니다.
+        rating_pred[interacted_indices] = 0
+
+        ind = np.argpartition(rating_pred, -5)[-5:]
+        
+        arr_ind = rating_pred[ind]
+       
+       # 추출된 값들을 내림차순으로 정렬하기 위한 인덱스를 얻음
+        arr_ind_argsort = np.argsort(arr_ind)[::-1]
+
+        # 실제 값들을 정렬된 순서대로 인덱스 배열에 적용
+        batch_pred_list = ind[arr_ind_argsort]
+        
+        # 예측값 저장
+        if pred_list is None:
+            pred_list = batch_pred_list
+            # batch_pred_list 길이만큼 user_id를 반복
+            user_list = np.repeat(user_id, len(batch_pred_list))
+        else:
+            pred_list = np.append(pred_list, batch_pred_list, axis=0)
+            # batch_pred_list 길이만큼 user_id를 반복하여 추가
+            user_list = np.append(user_list, np.repeat(user_id, len(batch_pred_list)), axis=0)
+
+    # 인덱스 매핑 파일 로드
+    with open('/Users/seunghoonchoi/Downloads/Recommend/RecBole/Dacon_recommender_system/Data/resume_seq_to_index.pkl', 'rb') as f:
+        resume_seq_to_index = pd.read_pickle(f)
+
+    with open('/Users/seunghoonchoi/Downloads/Recommend/RecBole/Dacon_recommender_system/Data/recruitment_seq_to_index.pkl', 'rb') as f:
+        recruitment_seq_to_index = pd.read_pickle(f)
+
+    # 인덱스에서 시퀀스로의 역 매핑 생성
+    index_to_resume_seq = {idx: seq for seq, idx in resume_seq_to_index.items()}
+    index_to_recruitment_seq = {idx: seq for seq, idx in recruitment_seq_to_index.items()}
+
+    # 결과를 저장할 빈 리스트 초기화
+    final_result = []
+
+    # user_list와 pred_list에 있는 인덱스를 실제 'resume_seq'와 'recruitment_seq'로 변환
+    for user, item in zip(user_list, pred_list):
+        # user_id2token을 사용하여 변환된 사용자 ID를 얻고
+        # index_to_resume_seq을 사용하여 원래의 'resume_seq'로 변환
+        original_user_seq = index_to_resume_seq.get(int(user_id2token[user]), -1)
+
+        # item_id2token을 사용하여 변환된 아이템 ID를 얻고
+        # index_to_recruitment_seq을 사용하여 원래의 'recruitment_seq'로 변환
+        original_item_seq = index_to_recruitment_seq.get(int(item_id2token[item]), -1)
+
+        # 최종 결과에 추가
+        final_result.append((original_user_seq, original_item_seq))
+
+    # 결과를 DataFrame으로 변환하고 CSV 파일로 저장
+    final_dataframe = pd.DataFrame(final_result, columns=['resume_seq', 'recruitment_seq'])
+    final_dataframe.sort_values(by='resume_seq', inplace=True)
+    final_dataframe.to_csv('/Users/seunghoonchoi/Downloads/Recommend/RecBole/saved/final_submission.csv', index=False)
+    print('Final mapping done and saved to CSV!')
+```
+
+saved에 저장된 model_path를 입력해서 추천값을 반환하는 코드입니다.  
+여기서는 LightGCN이 .view(-1) 함수를 통해 1차원 값을 반환했기 때문에  
+그에 맞게 코드를 구현하였습니다.  
+또한 데이콘 데이터의 user, item id가 원래 문자열이었기 때문에,  
+해당 부분을 정수로 변환했던 부분을 다시 문자열로 변환하는 코드를 추가했습니다.  
+
+만약 full_sort_predict함수가 .view(-1)를 안쓰고 그냥 2차원 데이터를 반환한다면,  
+그에 맞게 코드를 수정해야합니다.  
+아래 [\[ reference ⓶ \]](https://mingchin.tistory.com/420)에 있는 mingchin님의 블로그 글을 참고바랍니다.  
+
+<br>
+
+---
+### 5. 정리
+___
+
+오늘은 추천시스템을 구현한 대표적인 라이브러리인 recbole에 대해서 살펴보았습니다.  
+다음에는 이 recbole을 이용해서, 논문을 구현한 모델을 하나 포스팅해보겠습니다.  
+
+<br>
+
+#### Reference
+
+⓵[https://github.com/RUCAIBox/RecBole]('https://github.com/RUCAIBox/RecBole')  
+⓶[https://mingchin.tistory.com/420]('https://mingchin.tistory.com/420')
