@@ -5,6 +5,7 @@ excerpt:
 
 categories:
       - Time Series
+      - Algorithm
 
 tags:
       - [DTW, Time Series Length Comparison, Comparison of Time Differences]

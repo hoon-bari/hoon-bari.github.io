@@ -1,0 +1,299 @@
+---
+title: "LCS"
+excerpt:
+  "LCS라는 알고리즘에 대해 알고 계신가요? LCS는 최장 공통 부분문자열(Longest Common Substring)
+  또는 최장 공통 부분수열(Longest Common Subsequence)을 의미합니다. 같은거 아니냐구요? 다릅니다.
+  어떻게 다른지 한 번 알아보도록 하겠습니다."
+
+categories:
+      - Algorithm
+
+tags:
+      - [LCS, Longest Common Substring, Longest Common Subsequence]
+
+permalink: /Algo/LCS
+
+toc: true
+toc_sticky: true
+
+date: 2023-09-26
+last_modified_at: 2023-09-26
+
+use_math : true
+---
+
+![LCS1](https://github.com/hoon-bari/comments/assets/121400054/b8e8e271-e9b4-469f-8557-220a6ae2ebf3)
+
+(더 좋은 예시를 들고 싶었는데, 푸바오랑 맞출만한 단어가 안떠올라서...  
+더 좋은 단어 있음 말씀해주세요...)  
+
+Longest Common Substring과 Longest Common Subsequence의 차이를,  
+그림으로 설명해봤습니다. 차이가 보이시나요?  
+Longest Common Substring은 한 번에 이어진 문자열만 찾아내고,  
+Longest Common Subsequence는 공백을 건너뛰면서 공통되는 문자열을 찾는다는 점입니다.  
+비슷해보이면서도 헷갈리기 때문에, 구하는 점화식과 구하는 과정등을 보면서 같이 알아봐야합니다.  
+한 번 알아보도록 하겠습니다.  
+
+---
+### 1. 최장 공통 부분문자열(Longest Common Substring)
+___
+
+최장 공통 부분문자열은 위에서 본 것처럼 한 번에 이어진 가장 긴 문자열만 찾아냅니다.  
+언뜻 보면 쉬워보이는데,  
+이거를 구하는 점화식이 밑에 최장 공통 부분수열을 설명할 때 다시 쓰이므로 기억해둬야합니다.  
+점화식을 한 번 살펴보겠습니다.  
+
+```python
+if i == 0 or j == 0: # 마진 값
+    LCS[i][j] = 0
+elif string_A[i] == string_B[j]:
+    LCS[i][j] = LCS[i - 1][j - 1] + 1
+else:
+    LCS[i][j] = 0
+```
+
+최장 공통 부분문자열과 최장 공통 부분수열 모두 2차원 array형태를 이용합니다.  
+i, j가 1 이상일 때부터 검사를 시작하는데, 검사 순서는 아래와 같습니다.  
+1. 문자열 A, 문자열 B의 한 글자씩 비교합니다.
+2. 두 문자가 다르다면 LCS[i][j]에 0을 표시합니다.
+3. 두 문자가 같다면 LCS[i-1][j-1]값을 찾아 +1합니다.
+4. 위 과정을 반복합니다.
+
+최장 공통 부분문자열은 연속되어야하므로    
+현재 두 문자가 같을 때 두 문자의 앞 글자까지가 공통 문자열이라면 계속 공통 문자열이 이어지고,  
+아니라면 그 부분부터 다시 공통 부분문자열을 만들어가게 됩니다.  
+그림으로 보면 아래와 같습니다.
+
+<br>
+
+**⓵ 앞 마진이 0인 2차원 배열을 생성하여,**  
+**Fubao 문자열과 Fusion 문자열을 한 글자씩 비교를 시작합니다.**
+
+![Substring1](https://github.com/hoon-bari/comments/assets/121400054/09424d21-e938-41d5-9c69-c38b4c4fa461)
+
+<br>
+
+**⓶ LCS\[1\]\[1\] 부분에 같은 문자열 F가 존재하며,**  
+**LCS\[0\]\[0\] 부분은 0이므로 0과 1을 더한 1을 표시합니다.**
+
+![Substring2](https://github.com/hoon-bari/comments/assets/121400054/b5bfa2ae-b916-4e00-b8b9-ae36c8be3a5b)
+
+<br>
+
+**⓷ 마찬가지로 LCS\[2\]\[2\] 부분에 같은 문자열 u가 존재하며,**  
+**LCS\[1\]\[1\] 부분은 1이므로 1과 1을 더한 2를 표시합니다.**
+
+![Substring3](https://github.com/hoon-bari/comments/assets/121400054/4cf55aca-4584-4e33-8cc7-494febc85cfd)
+
+<br>
+
+**⓸ 그 후에는 같은 문자열이 안나오다가, LCS\[5\]\[5\] 부분에 같은 문자열 o가 나옵니다.**  
+**하지만 LCS\[4\]\[4\] 부분이 0이므로 0과 1을 더한 1을 표시합니다.**  
+
+![Substring4](https://github.com/hoon-bari/comments/assets/121400054/84a839b5-06fb-45cf-acf4-e7c112e78e1b)
+
+<br>
+
+**⓹ 최종적으로 숫자의 최댓값인 2까지의 문자열 Fu가 최장 공통 부분문자열이 됩니다.**
+
+![Substring5](https://github.com/hoon-bari/comments/assets/121400054/fb1eb193-4fab-4eed-9f09-037297146386)
+
+<br>
+
+---
+### 2. 최장 공통 부분수열(Longest Common Subsequence)
+---
+
+최장 공통 부분문자열이 연속되어있는 공통 문자열을 찾는 문제였다면,  
+최장 공통 부분수열은 공백이나 다른 문자열까지 고려하여 공통되는 문자열 중  
+가장 긴 것을 찾는 문제입니다.  
+
+좀 더 어렵게 표현하면, 주어진 여러 개의 수열 모두의 부분수열이 되는 수열 중에   
+가장 긴 것을 찾는 문제입니다.  
+diff 유틸리티의 근간이 되며, bioinformatics에도 많이 응용되고 있습니다.  
+그러면 점화식을 한 번 살펴보도록 하겠습니다.  
+위에서 살펴봤던 최장 공통 부분문자열의 점화식이 일부분 쓰이는 것을 볼 수 있습니다.  
+
+```python
+if i == 0 or j == 0:  # 마진 설정
+	LCS[i][j] = 0
+elif string_A[i] == string_B[j]:
+	LCS[i][j] = LCS[i - 1][j - 1] + 1
+else:
+	LCS[i][j] = max(LCS[i - 1][j], LCS[i][j - 1])
+```
+
+해당 점화식의 진행 순서는 아래와 같습니다.  
+1. 문자열 A, 문자열 B의 한 글자씩 비교해봅니다.
+2. 두 문자가 다르다면 LCS[i - 1][j]과 LCS[i][j - 1]중에 큰 값을 표시합니다.  
+3. 두 문자가 같다면 LCS[i - 1][j - 1]값을 찾아 +1 합니다.
+4. 위 과정을 반복합니다.  
+
+최장 공통 부분문자열을 구하는 과정과 다른 부분은 비교하는 두 문자가 다를 때입니다.  
+부분수열은 연속된 값이 아니기 때문에,  
+현재의 문자를 비교하는 과정 이전의 최대 공통 부분수열은 계속되어야 합니다.  
+그 과정이 바로 LCS[i - 1][j], LCS[i][j - 1]입니다.  
+그림으로 보면 아래와 같습니다.  
+
+<br>
+
+**⓵ 똑같이 앞 마진이 0인 2차원 배열을 생성하여,**  
+**Fubao 문자열과 Fusion 문자열을 한 글자씩 비교를 시작합니다.**
+
+![Subsequence1](https://github.com/hoon-bari/comments/assets/121400054/f09191c7-a224-4715-916f-f40d91fd72fb)
+
+<br>
+
+**⓶ LCS\[1\]\[1\] 부분에 같은 문자열 F가 존재하며,**  
+**LCS\[0\]\[0\] 부분은 0이므로 0과 1을 더한 1을 표시합니다.**
+
+![Subsequence2](https://github.com/hoon-bari/comments/assets/121400054/95346126-9ee4-45a2-97df-75bb7a613514)
+
+<br>
+
+**⓷ else 부분에서 max(LCS[i - 1][j], LCS[i][j - 1]) 부분 때문에,**  
+**현재 문자를 비교하는 과정 이전의 최대 공통 부분수열은 유지됩니다.**  
+**즉, Fusion의 F와 Fubao를 비교하는 과정의 최대 공통 부분수열은 1이 됩니다.**  
+**또한 else조건으로 인해, Fusion의 F이후 값들도 1이 됩니다.**  
+
+![Subsequence3](https://github.com/hoon-bari/comments/assets/121400054/b75e06ae-626c-49ea-8d57-36bd6419cb0b)
+
+<br>
+
+**⓸ 마찬가지로 Fusion의 u와 Fubao를 비교하는 과정에서,**  
+**LCS[2][2]는 LCS[1][1]에 1을 더한 2가 되며, 그것이 계속 유지됩니다.**  
+**즉, Fusion의 u와 Fubao를 비교하는 과정의 최대 공통 부분수열은 2가 됩니다.**  
+**또한 else조건으로 인해, Fusion의 u이후 값들도 2가 됩니다.**  
+
+![Subsequence4](https://github.com/hoon-bari/comments/assets/121400054/405d58bc-48f2-4b6a-b677-865791a3cb71)
+
+<br>
+
+**⓹ 해당 과정을 반복하면 최종적으로 아래와 같은 결과가 나옵니다.**
+
+![Subsequence5](https://github.com/hoon-bari/comments/assets/121400054/268bebe2-36c4-423e-838f-3594c8bfeac1)
+
+<br>
+
+---
+### 3. 최장 공통 부분수열(Longest Common Subsequence) 찾기
+---
+
+이렇게 만든 LCS 배열을 이용하여 값을 찾을 수 있습니다.  
+과정은 아래와 같습니다.  
+1. 결과값을 저장할 result 배열을 준비한 뒤, LCS 배열의 가장 마지막 값에서 시작합니다.  
+2. LCS[i - 1][j]와 LCS[i][j - 1] 중 현재 값과 같은 값을 찾습니다.  
+   만약 같은 값이 있다면 해당값으로 이동하며,  
+   같은 값이 없다면 result 배열에 해당 문자를 넣고 LCS[i - 1][j - 1]로 이동합니다.  
+3. 2번 과정을 반복하다 0으로 이동하게 되면 종료합니다. result 배열의 역순이 LCS입니다.
+
+그림으로 보면 아래와 같습니다.  
+
+<br>
+
+**⓵ LCS의 마지막 부분에서 시작, LCS[5][5]에 같은 값이 있으므로 이동합니다.**
+
+![Subsequence6](https://github.com/hoon-bari/comments/assets/121400054/25c14425-aab0-4da4-9d75-8164d5e320bd)
+
+<br>
+
+**⓶ LCS[5][5]와 더 이상 같은 값이 없으므로, 배열에 값을 채웁니다.**   
+**그 후 LCS[4][4]로 이동합니다.**   
+
+![Subsequence7](https://github.com/hoon-bari/comments/assets/121400054/f70bbc51-345d-4bed-8799-13138c2b0615)
+
+<br>
+
+**⓷ LCS[3][4], LCS[4][3]에 같은 값이 있는지 보고, 그 값으로 이동합니다.**  
+**(여기서는 왼쪽, 위로 움직이도록 하겠습니다.)**  
+**같은 값으로 계속 이동하다가,**   
+**더 이상 LCS[i - 1][j], LCS[i][j - 1]에 같은 값이 없는 LCS[2][2]에서 배열에 값을 채웁니다.**  
+**그리고 LCS[1][1]로 이동합니다.**  
+
+![Subsequence8](https://github.com/hoon-bari/comments/assets/121400054/df55e7de-cb07-4536-bf54-1a8a35422e06)
+
+<br>
+
+**⓸ LCS[1][1]도 주변에 같은 값이 없으므로, 배열에 값을 채웁니다.**  
+**그리고 LCS[0][0]으로 이동합니다.**  
+
+![Subsequence9](https://github.com/hoon-bari/comments/assets/121400054/3a92c060-1ddb-456d-9554-1d1676d95b4c)
+
+<br>
+
+**⓹ LCS[0][0]이 0이므로 종료하고, 배열을 뒤집으면 최장 공통 부분수열이 됩니다.**
+
+![Subsequence10](https://github.com/hoon-bari/comments/assets/121400054/dd768f9b-0a75-4849-ac21-e59dd3306c3e)
+
+<br>
+
+---
+### 4. 최장 공통 부분수열(Longest Common Subsequence)의 시간 복잡도
+---
+
+위에서는 result라는 정답 배열에 메모이제이션으로 겹치는 부분을 저장하고,  
+상위 단계로 이동했을 때 이 정보를 이용할 수 있도록 하는 과정을 이용했습니다.    
+즉 우리는 위 문제를 DP(Dynamic Programming)로 해결했다고 할 수 있습니다.  
+
+길이가 n과 m인 문자열에서, DP에 의한 실행 시간은 $O(n \times m)$ 입니다.  
+각 문자열의 모든 캐릭터 쌍에 대해 검사를 수행하기 때문에,  
+두 문자열의 길이에 선형적으로 비례하는 시간이 소요되기 때문입니다.  
+코드 최적화나 해쉬를 이용해서 복잡도를 더 줄일 수 있는 방법도 있는데,  
+그 부분은 시간 날 때 추가하여 포스팅해보겠습니다.  
+
+<br>
+
+---
+### 5. LCS 알고리즘 코드(Python)
+---
+
+LCS 알고리즘 full 코드는 아래와 같습니다.  
+이 코드는 백준 '비밀번호 만들기'[\[ 링크 \]]('https://www.acmicpc.net/problem/17218')의 해답이기도 합니다.  
+반복문 및 함수 부분에 위에 그림으로 살펴봤던 핵심 부분이 있습니다.  
+다른 문제나 프로그램에 이용할 때는 필요한 부분을 수정해주세요!  
+  
+```python
+# LCS 알고리즘
+def print_lcs(i, j):
+    if i == 0 or j == 0:
+        return
+    if str1[i] == str2[j]:
+        print_lcs(i - 1, j - 1)
+        print(str1[i], end="")
+    else:
+        if arr[i][j - 1] == arr[i][j]:
+            print_lcs(i, j - 1)
+        else:
+            print_lcs(i - 1, j)
+
+a = input()
+b = input()
+str1 = "0" + a
+str2 = "0" + b
+
+arr = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+
+for i in range(1, len(a) + 1):
+    for j in range(1, len(b) + 1):
+        if str1[i] == str2[j]:
+            arr[i][j] = arr[i - 1][j - 1] + 1
+        else:
+            arr[i][j] = max(arr[i - 1][j], arr[i][j - 1])
+
+print_lcs(len(a), len(b))
+```
+
+<br>
+
+---
+### 6. 정리
+---
+
+오늘은 최장 공통 부분문자열 및 최장 공통 부분수열에 대해 알아봤습니다.  
+다음 포스팅으로는 이 알고리즘을 이용한 diff 유틸리티에 대해 알아보겠습니다.  
+
+<br>
+
+#### Reference
+[① https://velog.io/@emplam27/LCS](https://velog.io/@emplam27/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-%EA%B7%B8%EB%A6%BC%EC%9C%BC%EB%A1%9C-%EC%95%8C%EC%95%84%EB%B3%B4%EB%8A%94-LCS-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-Longest-Common-Substring%EC%99%80-Longest-Common-Subsequence)  
+[② https://ko.wikipedia.org/wiki/최장_공통_부분수열](https://ko.wikipedia.org/wiki/%EC%B5%9C%EC%9E%A5_%EA%B3%B5%ED%86%B5_%EB%B6%80%EB%B6%84_%EC%88%98%EC%97%B4)  
