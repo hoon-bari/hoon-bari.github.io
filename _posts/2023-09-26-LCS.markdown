@@ -45,11 +45,11 @@ ___
 
 ```python
 if i == 0 or j == 0: # 마진 값
-    LCS[i][j] = 0
+  LCS[i][j] = 0
 elif string_A[i] == string_B[j]:
-    LCS[i][j] = LCS[i - 1][j - 1] + 1
+  LCS[i][j] = LCS[i - 1][j - 1] + 1
 else:
-    LCS[i][j] = 0
+  LCS[i][j] = 0
 ```
 
 최장 공통 부분문자열과 최장 공통 부분수열 모두 2차원 array형태를 이용합니다.  
@@ -116,11 +116,11 @@ diff 유틸리티의 근간이 되며, bioinformatics에도 많이 응용되고 
 
 ```python
 if i == 0 or j == 0:  # 마진 설정
-	LCS[i][j] = 0
+  LCS[i][j] = 0
 elif string_A[i] == string_B[j]:
-	LCS[i][j] = LCS[i - 1][j - 1] + 1
+  LCS[i][j] = LCS[i - 1][j - 1] + 1
 else:
-	LCS[i][j] = max(LCS[i - 1][j], LCS[i][j - 1])
+  LCS[i][j] = max(LCS[i - 1][j], LCS[i][j - 1])
 ```
 
 해당 점화식의 진행 순서는 아래와 같습니다.  
