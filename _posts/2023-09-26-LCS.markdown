@@ -1,5 +1,5 @@
 ---
-title: "LCS"
+title: "LCS 알고리즘"
 excerpt:
   "LCS라는 알고리즘에 대해 알고 계신가요? LCS는 최장 공통 부분문자열(Longest Common Substring)
   또는 최장 공통 부분수열(Longest Common Subsequence)을 의미합니다. 같은거 아니냐구요? 다릅니다.
