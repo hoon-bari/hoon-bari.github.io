@@ -1,0 +1,193 @@
+---
+title: "[완강 후기] 패스트캠퍼스 '세계 3등에게 배우는 실무 밀착 데이터 시각화'"
+excerpt:
+  "데이터 시각화의 방법 및, 시각화 Tool로 가장 유명한 Tableau를 학습하는 '세계 3등에게 배우는 실무 밀착 데이터 시각화' 강의에 대한 후기를 올려보려합니다."
+
+categories:
+      - Data Analysis
+
+tags:
+      - [Fastcampus, 패스트캠퍼스, 시각화, Visualization, Tableau, BI Tool]
+
+permalink: /DA/Fastcampus_Tableau
+
+toc: true
+toc_sticky: true
+
+date: 2023-12-09
+last_modified_at: 2023-12-09
+
+use_math : true
+---
+<br>
+
+<img width="684" alt="스크린샷 2023-12-09 오후 3 58 33" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/1bf6d8b7-3085-4313-a8f0-6245e52c65fd">
+
+<p align="center">
+  <a href="https://fastcampus.co.kr/data_online_global3">['세계 3등에게 배우는 실무 밀착 데이터 시각화 강의 링크']</a>
+</p>
+
+
+
+---
+### 1. 강의 선택 이유
+---
+
+저는 보통 파이썬의 matplotlib으로 시각화를 하곤 했는데요.  
+간단하게 시각화해서 볼때는 괜찮은데,  
+조금 복잡하게 시각화를 하고자 하면 아래처럼 과도하게 코드가 길어지게 됐었습니다.  
+결과물도 그렇게까지 마음에 들지는 않았구요.  
+  
+```python
+# 각 날짜별로 target과 control 그룹의 유저 수 계산
+user_counts = merge_aud_connect_pivot.reset_index().groupby(['sdate', 'type']).size().unstack(fill_value=0)
+
+plt.figure(figsize=(12, 6))
+
+plt.plot(user_counts.index, user_counts['target'], marker='o', label='Target', color='red')
+plt.plot(user_counts.index, user_counts['control'], marker='o', label='Control', color='gray')
+
+plt.xlabel('Date')
+plt.ylabel('Number of Users')
+plt.title('Target vs Control Number of login Users by Date', fontproperties=fontprop)
+plt.legend()
+
+date_format = mdates.DateFormatter('%Y-%m-%d')
+plt.gca().xaxis.set_major_formatter(date_format)
+plt.xticks(user_counts.index, user_counts.index.strftime('%Y-%m-%d'), rotation=45, color='black')
+
+highlight_dates = ['2020-11-21', '2020-11-22']
+highlight_date_indices = [user_counts.index.get_loc(datetime.strptime(date, '%Y-%m-%d')) for date in highlight_dates]
+
+for index, date in enumerate(user_counts.index):
+    if index in highlight_date_indices:
+        plt.gca().get_xticklabels()[index].set_color('red')
+
+    target_count = user_counts.loc[date, 'target']
+    control_count = user_counts.loc[date, 'control']
+    
+    if date == datetime.strptime('2020-11-22', '%Y-%m-%d'):
+        plt.text(date, target_count-20, f'{target_count}', ha='center', va='top', color='black')
+    else:
+        plt.text(date, target_count+10, f'{target_count}', ha='center', va='bottom', color='black')
+    
+    plt.text(date, control_count-10, f'{control_count}', ha='center', va='top', color='black')
+
+date = datetime.strptime('2020-11-19', '%Y-%m-%d')
+plt.axvline(x=date2num(date), color='black', linestyle='--', linewidth=1)
+
+plt.tight_layout()
+plt.show()
+```
+<br>
+
+![예시](https://github.com/hoon-bari/Recommender_systems/assets/121400054/e62b696f-dbfc-44c9-ae98-aec05b5f6f7c)
+
+<br>
+
+그래서 항상 시각화 툴에 대한 고민을 했었는데,  
+마침 패스트캠퍼스에 제 고민을 해결해줄만한 강의가 있었습니다.  
+'세계 3등에게 배우는 실무 밀착 데이터 시각화' 강의입니다.  
+
+<img width="688" alt="스크린샷 2023-12-09 오후 3 37 23" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/40524064-06cd-4ef3-81dd-45760d5b2ccc">
+
+<br>
+
+아마 저와 같은 고민을 하신 분들이라면 위 설명을 보고 구매를 누르실 수도...?  
+(물론 '코딩 없이'는 아니고 파이썬이나 R과 연결하려면 코딩이 조금 필요합니다.)  
+(matplotlib보단 확실히 코딩이 '매우' 짧습니다.)   
+저도 그래서 과감하게 구매를 했습니다.  
+
+---
+### 2. 강의 개요
+___
+
+강의 시간은 15시간, 인트로 포함 총 18개의 챕터로 이루어져 있습니다.  
+챕터 1에서는 데이터 시각화 및 스토리텔링에 대한 강의로 시작을 하며,  
+그 이후 챕터부터 본격적으로 Tableau(태블로) Tool을 배우게 됩니다.  
+
+구체적으로는 데이터 시각화 기초 1시간, 태블로 기능 익히는 시간 7시간,  
+태블로 실전 6시간, 그 외 기능 및 포트폴리오 이야기 1시간 정도로 구성이 되어있습니다.  
+
+강의를 들으면서 아래처럼 실습을 해볼 수 있습니다.  
+
+![IMG_1392](https://github.com/hoon-bari/Recommender_systems/assets/121400054/1e1da02f-53a3-454b-bbe4-62b58fd2d6c7)
+
+<br>
+
+![IMG_1395](https://github.com/hoon-bari/Recommender_systems/assets/121400054/5769f56f-0a5d-40ad-9cdf-a7b9739caac9)
+
+<br>
+
+강의를 완강하면 아래처럼 수강증도 줍니다. 
+
+<img width="1061" alt="스크린샷 2023-12-09 오후 4 45 25" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/b736a62c-86f8-4e20-b3bd-6fef6afdc2e9">
+
+<br>
+
+---
+### 3. 강의 후기
+---
+
+#### 1. 어떤 사람들이 들으면 좋을까요?
+
+이 강의는 전반적으로 태블로에 대한 강의로 이루어져 있습니다.  
+특히 처음 태블로를 사용하는 사람이라고 가정하고  
+태블로 홈페이지에 처음 가입한 사람에게 주어지는  
+Tableau Professional을 이용하여 강의가 진행되므로  
+처음 태블로를 배우시는 분들에게 적합합니다.  
+(만약 Tableau 15일 평가판을 다 사용하셨다면... 방법을 찾아야합니다.)  
+
+태블로의 경우 BI Tool로 가장 유명하며 외국 및 우리나라를 포함 많은 기업에서 사용 중이고  
+DA 채용시 태블로 사용이 가능한 사람을 우대하므로,  
+DA에 관심이 있거나 처음 태블로를 사용하는 분들에게 이 강의가 적합하다고 생각합니다.  
+
+<br>
+
+#### 2. 혹시 강의에 단점이 있나요?
+
+음...  
+저는 원체 손이 좀 느린 편인데,  
+강사님은 손이 상당히 빠르십니다.(부럽...)  
+그래서 강의를 듣다보면 강사님이 휙휙 지나가시는 부분이 있는데,  
+저는 그 전이나 전전 단계에서 머무르고 있기 때문에...  
+
+혹시 강사님 강의를 따라가면서 실습하시는걸 좋아하는 분들이라면,  
+강의 속도를 0.8배로 낮춰서 듣는걸 추천드립니다.  
+아니면 뒤로 돌아가서 천천히 따라가셔도 됩니다. 인강의 장점이 이거니까요.  
+그 외에는 아주 좋은 강의라고 생각합니다.  
+
+<br>
+
+#### 3. 이 강의를 듣고나서 후속으로 들을만한 강의가 있을까요?
+
+저는 이 강의를 듣고나서 '세계 3등에게 배우는 13개 데이터 분석 프로젝트' 강의를 듣고 있는데요.  
+데이터 시각화가 중요하긴 하지만,  
+데이터 시각화도 결국은 잘 전처리된 데이터가 들어가야 효과가 있습니다.  
+(Garbage in Garbage out은 데이터 분야 사람에게는 뗄레야 뗄 수 없는...)  
+
+'세계 3등에게 배우는 데이터 분석 프로젝트' 강의는,  
+데이터 탐색 및 전처리 분야에 대해 잘 알려주는 아주 훌륭한 강의라고 생각합니다.  
+현업에서 어떠한 방식으로 데이터를 다루고 시각화하는지에 대해 잘 알려주며,  
+최근에 나온 강의라 데이터 분석 분야 트렌드도 따라 갈 수 있습니다.  
+링크를 걸어드릴테니 관심 있으신 분들은 시각화 강의를 듣고 후속으로 들으시길 추천합니다.  
+[\['세계 3등에게 배우는 데이터분석 프로젝트 강의 링크'\]]('https://fastcampus.co.kr/data_online_13project')
+
+<br>
+
+#### 4. 강의 후기
+
+원래 파이썬으로 시각화를 했었는데,  
+이젠 태블로로 접근을 먼저하게 됐습니다.  
+그리고 Tableau Public 커뮤니티에 참여하며 다른 사람이 한 시각화를 따라해보고  
+그것을 제 프로젝트에 적용할 수 있게 됐다는 것도 큰 장점인 것 같습니다.  
+(이렇게 포폴이 또 쌓여갑니다😃)  
+향후에는 강사님이 운영하시는 비저블 4기에도 지원해보려고 합니다.  
+그만큼 잘 가르치십니다.  
+
+혹시 2024년을 대비해서 자기계발을 하시거나,  
+혹은 DA 직무를 준비하시는 분들이라면 한 번 강의를 들어보는건 어떨까요?  
+해당 강의를 통해 2024년 강의를 기분 좋게 시작할 수 있으실거라고 생각합니다.  
+
+---
+'본 게시물은 패스트캠퍼스 수강 후기 이벤트 참여를 위해 작성되었습니다'
