@@ -175,6 +175,10 @@ DA에 관심이 있거나 처음 태블로를 사용하는 분들에게 이 강�
 링크를 걸어드릴테니 관심 있으신 분들은 시각화 강의를 듣고 후속으로 들으시길 추천합니다.  
 [\['세계 3등에게 배우는 13개 데이터분석 프로젝트 강의 링크'\]]('https://fastcampus.co.kr/data_online_13project')
 
+저도 열심히 듣고 있습니다...!
+
+![IMG_1397](https://github.com/hoon-bari/Recommender_systems/assets/121400054/ece2694a-8028-487a-b003-f70bfa60b529)
+
 <br>
 
 #### 4. 강의 후기
