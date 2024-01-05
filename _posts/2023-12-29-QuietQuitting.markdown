@@ -16,8 +16,8 @@ permalink: /DA/QuietQuitting
 toc: true
 toc_sticky: true
 
-date: 2024-01-03
-last_modified_at: 2024-01-03
+date: 2023-12-29
+last_modified_at: 2023-12-29
 
 use_math : true
 ---
