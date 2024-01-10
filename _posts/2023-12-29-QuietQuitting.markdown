@@ -135,9 +135,9 @@ use_math : true
 
 #### Reference
 
-⓵[‘조용한 사직’, 다시 정의해야 하는 이유]('https://www.sisaweek.com/news/articleView.html?idxno=203253')  
-⓶[회사가 나의 '조용한 사직'을 모를 거라는 착각]('https://www.hankookilbo.com/News/Read/A2023022409220003375?rPrev=A2023041411300000431')
-③['조용한 사직'을 아시나요?]('https://www.saramin.co.kr/zf_user/hr-magazine/view?hr_idx=979')
-④[조용한 사직, 위험한 문화인가?]('http://www.koreasisailbo.com/1005878')
-⑤['조용한 퇴사'에 반격…이젠 기업들이 '조용한 해고' 나섰다]('https://www.joongang.co.kr/article/25188463#home')
+[⓵ ‘조용한 사직’, 다시 정의해야 하는 이유](https://www.sisaweek.com/news/articleView.html?idxno=203253)  
+[⓶ 회사가 나의 '조용한 사직'을 모를 거라는 착각](https://www.hankookilbo.com/News/Read/A2023022409220003375?rPrev=A2023041411300000431)
+[③ '조용한 사직'을 아시나요?](https://www.saramin.co.kr/zf_user/hr-magazine/view?hr_idx=979)
+[④ 조용한 사직, 위험한 문화인가?](http://www.koreasisailbo.com/1005878)
+[⑤ '조용한 퇴사'에 반격…이젠 기업들이 '조용한 해고' 나섰다](https://www.joongang.co.kr/article/25188463#home)
 

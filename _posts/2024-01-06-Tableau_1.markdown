@@ -1,0 +1,337 @@
+---
+title: "태블로 따라쟁이 ① : 제주오름도 식후경(공공데이터포털 데이터 시각화)"
+excerpt:
+  "태블로 공간 조인 & 버퍼 연습 겸, 태블로 전서연 강사님의 글을 참고하여 제주도 오름주변 맛집을 태블로로 데이터 시각화해보았습니다."
+
+categories:
+      - Data Analysis
+
+tags:
+      - [Tableau, 공간 조인, 버퍼, 공공데이터시각화]
+
+permalink: /DA/Tableau_1
+
+toc: true
+toc_sticky: true
+
+date: 2024-01-06
+last_modified_at: 2024-01-06
+
+use_math : true
+---
+
+![제주오름도 식후경](https://github.com/hoon-bari/Recommender_systems/assets/121400054/4de18fd7-c79a-47b4-aa8c-3acdda77f862)
+
+
+
+<br>
+
+---
+### 금오름을 왜 오르시는 걸까요?
+---
+
+태블로 연습 겸 태블로 퍼블릭에 보여줄만한 것이 뭐가 없을까해서 찾다가,  
+제가 종종 보는 유튜버 뭐랭하맨님의 쇼츠가 생각이 났습니다.  
+
+<img width="384" alt="스크린샷 2024-01-06 오후 3 51 23" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/93be4665-de56-4907-ad6e-5f3318841364">
+
+금오름을 왜 오르냐고요??
+
+<br>
+
+<img width="1440" alt="스크린샷 2024-01-06 오후 3 59 00" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/7bac1512-748c-49ea-917d-ac7f29f24c04">
+
+사진찍으려고요... ㅎㅎ  
+운동하려고 오르면 총살당하는(?) 오름!  
+하지만 이 오름도 배고프면 오르기 싫고, 또 올라갔다 내려오면 배가 고파지죠?  
+그래서 오늘은 공공데이터를 가지고, 제주도 오름 주변에 있는 맛집을 태블로로 시각화하려합니다.  
+  
+마침 제가 패스트캠퍼스에서 들었던 태블로 강의의 전서연 강사님께서,  
+공간 조인 및 버퍼를 이용해서 [제주도 호텔 주변 맛집을 시각화](https://tableauwiki.com/tableau_spatial_join/)하신게 있었습니다.   
+그래서 이것을 따라하면서, 추가할 기능이 있으면 추가해보려고 합니다.  
+
+대시보드를 다운받으시려면 옆에 있는 링크를 눌러주세요! [대시보드 다운 받기](https://public.tableau.com/app/profile/seunghoon.choi/vizzes)
+
+<br>
+
+---
+### 대시보드 핵심 기능
+---
+
+**오름 위경도와 맛집 위경도 공간조인 → 특정 오름 근처 2km 내의 맛집의 개수와 위치 보여주기** 
+  
+왜 2km로 했냐면, 큰 오름의 경우 오름 중심에서 내려오는 거리가 있기 때문에  
+그것까지 감안해서 2km로 정했습니다.  
+
+<br>
+
+---
+### 사용 데이터
+---
+
+사용 데이터는 아래와 같습니다.  
+1. [제주도 오름 리스트](https://docs.google.com/spreadsheets/d/1H_vYxd0HXT_gTn-m7y2OxZltVTTKrw5kwqVQd_TPoqo/edit#gid=2133178325)(2023.05.15 기준 / 출처 : 공공데이터포털)
+2. [제주도 모범음식점 리스트](https://docs.google.com/spreadsheets/d/1rdFpj0Exsa2LEE-A4JhqlpFQ8JiwmaBxawAvLEIbxYY/edit#gid=1013258884)(2023.10.23 기준 / 출처 : 공공데이터포털)
+
+위 데이터 2개 모두 좌표가 없기 때문에, 좌표를 만들어줘야합니다.  
+구글 스프레드 시트 + Geocode를 이용하면 주소(소재지)를 기반으로 좌표를 얻을 수 있습니다.  
+자세한 내용은 태블로 위키의 전서연 강사님 글을 참고해주시거나,  
+위 구글 스프레드시트를 복사(제목 클릭)해서 사용해주세요!
+
+참고로 저는 위 링크에 있는 파일 중 모범음식점 파일의 위도, 경도 칼럼 이름 옆에  
+(맛집)을 붙여서 어떤 위도와 경도인지 구분했습니다.  
+
+<br>
+
+---
+### 공간 조인
+---
+
+저는 구글 스프레드시트 파일을 드라이브에 저장해서,  
+구글 드라이브로 파일을 연결했습니다.  
+
+<img width="1440" alt="태블로_1_1" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/3d04641f-4cf6-433b-ac99-50153df312e1">
+
+#### 1. 데이터 연결 및 추가
+
+우선 제주도 오름현황 파일을 연결해준 뒤에,  
+추가 버튼을 눌러서 모범음식점 파일을 추가로 연결해주세요!  
+
+<img width="1440" alt="태블로_1_2" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/f1c09044-4490-4725-8406-0ceecfa39688">
+
+그럼 아래처럼 2개 데이터가 들어와있게 됩니다. 
+
+<img width="1440" alt="태블로_1_3" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/b7eb9d3e-3dc9-411c-ac33-49df6f4baf8c">
+
+<br>
+
+#### 2. 공간 조인
+
+이제 오름 데이터를 모범음식점 데이터와 공간조인 해줘야 하는데요.  
+현재 오름 데이터가 있는 상태에서 그냥 모범음식점 데이터를 드래그하면 아래와 같이 연결이 됩니다.  
+
+<img width="1440" alt="태블로_1_4" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/f4b59d4e-5ad5-4f41-9897-1ca35d0fea2d">
+
+보라색 네모박스 부분을 보면 친절하게 관계를 생성하는 것과 조인하는 것의 차이를 설명해주는데요.  
+지금 저희가 한 것은 데이터 관계를 설정하는 부분이고,  
+데이터를 조인하려면 테이블을 끌어놓는게 아니라 테이블을 더블클릭해줘야합니다.  
+오름 데이터를 더블클릭하면 아래와 같은 화면이 나오게 되는데요.  
+
+<img width="1440" alt="태블로_1_5" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/dc304b77-d715-4f27-a4c0-56d2de65e78a">
+
+이 상태에서 모범데이터 테이블을 끌어오면 아래와 같이 조인이 됩니다.  
+
+<img width="1440" alt="태블로_1_6" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/e337ce2a-c3a6-4bed-9de3-5616b570b465">
+
+<br>
+
+#### 3. 조인 계산 및 조인 유형 설정하기  
+
+조인 계산시 아래 함수를 이용해줄건데요.
+Buffer는 태블로에서 점을 중심으로 지정된 거리의 버퍼를 반환합니다.  
+
+```
+Buffer(Geometry, 거리, 단위)
+```
+
+또한 MAKEPOINT는 위도와 경도로 구성된 공간 개체를 반환하거나,  
+x좌표, y좌표 및 SRID로 구성된 공간 개체를 반환합니다.  
+
+```
+MAKEPOINT([위도], [경도])
+또는
+MAKEPOINT([x_좌표, y_좌표, 102748])
+```
+
+바로 전 이미지의 조인된 상태에서 벤다이어그램 부분을 누른 다음에   
+조인 계산 편집(혹은 만들기)이라는 버튼을 눌러줍시다.  
+
+그리고 아래와 같이 버퍼를 입력해줍니다.  
+이렇게 하면 오름의 위경도 중심으로 2km 거리의 버퍼를 반환합니다.  
+
+<img width="560" alt="태블로_1_7" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/ac65ff23-317a-41c9-8429-8c6c90be63b8">
+
+다음으로 똑같이 모범음식점 데이터에서 조인 계산 편집(혹은 만들기)를 눌러준 다음에,  
+아래처럼 Makepoint를 입력해줍니다.  
+
+<img width="560" alt="태블로_1_8" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/1c07bbfb-f1c0-4e0f-a02b-40994ea430fd">
+
+그리고 마지막으로 가운데 부분을 클릭해서 Intersect로 설정해줍니다.  
+그러면 아래와 같이 설정이 됩니다.  
+
+<img width="560" alt="태블로_1_9" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/7920632c-25a6-47bc-8dc5-cfb197a7433e">
+
+위도와 경도의 위치를 바꿔서 함수에 넣으면 공간조인 결과가 안나옵니다.  
+주의해서 넣어주세요!  
+이제 공간조인이 완성이 됐습니다.  
+저도 강사님처럼 완성된 조인을 공간조인 완료로 이름을 바꿔보겠습니다.  
+
+<img width="1440" alt="태블로_1_10" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/22596e2d-dcab-4a30-84e8-05acb520e208">
+
+<br>
+
+---
+### 시트 제작
+---
+
+#### 1. 오름 주변 맛집 수 시트
+
+행 선반에 오름명을 넣어주고, 텍스트에 공간조인완료(카운트)를 넣으면 아래처럼 나오게 됩니다.  
+(색상은 따로 서식 변경해서 넣어주었습니다.)  
+
+<img width="1440" alt="태블로_1_11" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/aa81d9d7-689b-41d3-9830-39f6630f11a7">
+
+#### 2. 오름 표시 지도 제작 시트
+
+이번에는 시트를 하나 새로 만들고 열 선반에 Longitude, 행 선반에 Latitude를 넣습니다.  
+그렇게하면 지도에 오름의 위치가 표시됩니다.  
+(맵은 Mapbox에서 Street 테마로 커스텀했습니다.)  [참고](https://help.tableau.com/current/pro/desktop/ko-kr/maps_mapsources_mapbox.htm)
+
+<img width="1440" alt="태블로_1_12" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/c2c58f41-74ee-4797-8da3-701c9edc8e2d">
+
+그리고 세부정보에 오름명, 소재지, 표고를 넣어준 다음,  
+도구 설명을 눌러 도구 설명을 아래와 같이 편집해줍니다.  
+
+<img width="1440" alt="태블로_1_13" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/366efe2c-86d8-4448-9381-ee01c90ee51d">
+
+그러면 마우스오버를 할 때 아래와 같이 나오게 됩니다. 금오름은 해발 428m네요!    
+
+<img width="1440" alt="태블로_1_14" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/92822960-ae7d-4004-829d-49ec839f1dd9">
+
+그리고 마지막으로 마크의 유형을 모양으로 변경한 뒤, 아래처럼 원하는 마크 모양을 넣어줍니다.  
+저는 [flaticon](https://www.flaticon.com/free-icon/volcano_10735424?term=volcano&page=2&position=94&origin=search&related_id=10735424) 사이트에서 이미지를 받아와서,  
+내 Tableau 레포지토리의 Volcano 폴더에 저장했습니다.  
+
+<img width="1440" alt="태블로_1_15" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/226b559c-0349-4bb7-a0d8-ea5f09db6761">
+
+그러면 아래처럼 마크 모양이 변경되어 맵이 출력됩니다.  
+
+<img width="1440" alt="태블로_1_16" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/1bec59f2-0cda-49b1-89d2-55596ce41fed">
+
+<br>
+
+#### 3. 맛집 맵 만들기
+
+아래처럼 맛집이라는 계산된 필드를 하나 만들어줍니다.  
+
+<img width="560" alt="태블로_1_17" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/8ed14f41-6840-4f98-aab3-431565d0749e">
+
+만든 맛집 필드를 누른 후에 맵으로 드래그하여 맛집 필드를 마크 계층(왼쪽 위)으로 추가해줍니다.  
+
+<img width="1440" alt="태블로_1_18" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/b8a56e59-41c9-453e-b55c-b3a3cf478502">
+
+그렇게 한 다음 형태를 맵으로 변경해주고, 업소명과 소재지, 업태를 세부정보에 넣어줍니다.  
+그리고 도구 설명의 서식을 아래와 같이 바꿔줍니다.  
+
+<img width="1440" alt="태블로_1_19" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/47d987cf-c744-44e5-bd98-67f5215b84bc">
+
+그러면 아래와 같이 맛집 정보가 마우스 오버 시 표시됩니다.  
+
+<img width="1440" alt="태블로_1_20" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/5098f207-9597-4a18-9dae-89495971c959">
+
+<br>
+
+#### 4. 버퍼 생성
+
+아래와 같이 오름 주변 2km 버퍼를 반환하는 계산된 필드 '오름(버퍼)'를 만들어줍니다.  
+
+<img width="560" alt="태블로_1_21" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/88627fdb-d4cf-4d7b-ace1-b5c17c038b07">
+
+그러고 위에서 했던 것처럼 이 계산된 필드를 마크 계층(왼쪽 위)로 추가해줍니다.  
+
+<img width="1440" alt="태블로_1_22" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/b4ff6d2c-2100-49e7-850c-61caa23309b3">
+
+그렇게 하면 오름 주변 2km가 원으로 표시됩니다.  
+참고로 마크계층 순서는 사진과 같이 해주셔야합니다.  
+
+<img width="1440" alt="태블로_1_23" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/bcf2541a-51b6-468c-b410-80e669b6ed07">
+
+<br>
+
+---
+### 대시보드 만들기
+---
+
+저도 강사님과 마찬가지로 피그마에서 대시보드 이미지 파일을 제작했습니다.  
+
+#### 1. 오름 검색 필터 만들기
+
+오름 정보 시트를 드래그 한 후, 드래그한 시트의 아래 화살표를 눌러 오름명 필터를 선택해줍니다.  
+
+<img width="1440" alt="태블로_1_24" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/fa857ea9-36df-442a-9e39-431cf22f93e7">
+
+그런 다음에 뜬 필터에서 와일드카드 일치를 눌러줍니다.  
+
+<img width="1440" alt="태블로_1_25" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/3f8b5ce3-1594-426b-8393-5ece7c5355c7">
+
+마지막으로 아래처럼 검색창 형태로 만들어서 보기 좋게 해주면 됩니다.  
+
+<img width="1440" alt="태블로_1_26" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/fb993a71-e590-49a3-90f9-85ad4af114bd">
+
+<br>
+
+#### 2. 대시보드 동작
+
+대시보드 동작 작업을 하기 전에, 아래처럼 오름 이름이라는 시트를 하나 만들어줍니다.  
+오름명을 텍스트에만 넣어주면 됩니다.  
+
+<img width="1440" alt="태블로_1_27" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/3a2e043f-737f-48b0-b303-5f97d421294d">
+
+
+일단 아래처럼 모든 시트를 대시보드에 끌어옵니다.  
+
+<img width="1440" alt="태블로_1_28" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/99798a52-8968-4d55-ae9f-0da255868f65">
+
+대시보드의 동작에 들어갑니다.  
+
+<img width="1440" alt="태블로_1_29" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/518a696d-81ed-4c45-a7e9-972609ca650d">
+
+동작에서 동작 추가 -> 필터를 선택합니다.  
+
+<img width="1440" alt="태블로_1_30" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/648b003c-017f-4076-869a-8072aa3953fc">
+
+아래와 같이 필터를 설정해줍니다. 
+선택 해제 시 찾았던 오름의 지도가 유지되게 해줍니다.  
+
+<img width="1440" alt="태블로_1_31" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/2739b49f-696a-414c-9ac4-f36f7874b3bb">
+
+필터를 설정한 뒤,  
+검색창에 오름 이름을 입력하고 나온 오름을 선택하면 해당 오름 주변의 식당이 나옵니다.  
+지도의 핀 고정을 해제하면 검색한 대로 지도가 움직입니다.  
+
+<img width="1440" alt="태블로_1_32" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/2f22061f-1bba-44e2-a75d-a1fd560d6ffb">
+
+금오름은 왜 안하냐구요?  
+금오름 주변 2km에는 아래처럼 모범음식점이 없다고 나옵니다.  
+금오름 가시는 분들은 꼭 운전해서 가세요 ㅎㅎ  
+
+<img width="1366" alt="태블로_1_33" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/c0a929db-59b3-4802-9b45-09b9355fb80a">
+
+<br>
+
+#### 3. 메인화면 만들기
+
+대시보드를 하나 새로 만들어준 다음에 메인화면으로 이름을 설정합니다.  
+그런 다음 왼쪽 하단의 탐색 개체를 이용하여 사진과 같이 편집해줍니다.  
+
+<img width="1440" alt="태블로_1_34" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/9eb89ad6-d7c9-4de8-94c9-de7a8847b759">
+
+이렇게 하면 하나의 앱과 같은 멋진 대시보드가 완성이 됩니다.  
+
+![제주오름도 식후경](https://github.com/hoon-bari/Recommender_systems/assets/121400054/4de18fd7-c79a-47b4-aa8c-3acdda77f862)
+
+<br>
+
+강사님을 따라서 한 번 만들어보았는데요.  
+생각보다 오름 주변에 겹치는 식당이 많이 없네요...??  
+산이라서 그런가... 아님 모범음식점만 한정해서 그런가 싶기도하네요. ㅎㅎ
+
+다음에는 다른 주제로 한번 따라쟁이 해보도록 하겠습니다.  
+
+<br>
+
+#### Reference
+
+[⓵ https://tableauwiki.com/tableau_spatial_join/](https://tableauwiki.com/tableau_spatial_join/)  
+[⓶ https://youngjunyi.github.io/analytics/2020/01/30/spatial-join-in-tableau.html](https://youngjunyi.github.io/analytics/2020/01/30/spatial-join-in-tableau.html)  
+[③ https://manywisdom-career.tistory.com/2](https://manywisdom-career.tistory.com/2)  
