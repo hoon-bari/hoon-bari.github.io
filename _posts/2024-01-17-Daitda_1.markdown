@@ -1,0 +1,217 @@
+---
+title: "'다잇다' 시리즈 ① : 파레토 차트를 통해 '다잇다' 홈쇼핑의 매출 성장 방안 인사이트 도출하기"
+excerpt:
+  "가상의 홈쇼핑 '다잇다'의 데이터를 분석한다고 생각해보겠습니다. 
+  '다잇다' 홈쇼핑의 매출 성장 방안을 어떻게 분석하고 제시할 수 있을까요?"
+
+categories:
+      - Data Analysis
+
+tags:
+      - [Tableau, 다잇다, 가상데이터시각화, python]
+
+permalink: /DA/Daitda_1
+
+toc: true
+toc_sticky: true
+
+date: 2024-01-17
+last_modified_at: 2024-01-17
+
+use_math : true
+---
+
+![다잇다](https://github.com/hoon-bari/Recommender_systems/assets/121400054/4a454be5-338a-4003-b855-9610106173e9)
+
+
+당신은 현재 가상의 홈쇼핑 기반 온라인 커머스 기업 '다잇다'의 데이터 분석가입니다.  
+꿀같은 휴가를 즐기고 온 다음날, 팀장님에게서 아래와 같은 메일이 왔습니다.  
+
+<br>
+
+![mail](https://github.com/hoon-bari/Recommender_systems/assets/121400054/31a79c5c-76aa-4a8e-badd-774d1ef4ae74)
+
+
+지금은 2021년 7월 첫째 날, 생각보다 마감일이 얼마 남지 않았습니다.  
+'다잇다'가 성장할 수 있게, 요청 받은 대로 인사이트를 도출해보겠습니다.  
+
+<br>
+
+### |&nbsp;&nbsp; 데이터 스키마
+
+데이터를 받았습니다. 데이터는 아래와 같이 구성돼있습니다.  
+
+- online_customer_data.csv : 다잇다 고객의 인적/구매 이력 정보를 담은 데이터  
+      - customer_no : 고객번호(보통 고유함), 고객번호의 앞 여섯 자리는 고객의 가입연월을 의미함  
+                      (예를 들어, 2019073300103 고객의 가입연월은 2019-07)  
+      - age : 고객 연령  
+      - gender : 고객 성별(1: 남성, 2: 여성, 9: 성별 알 수 없음),  
+      - order_no : 주문 번호  
+      - order_date : 주문 일자  
+      - channel : 주문 채널(TV, Mobile)  
+      - item_category : 아이템 카테고리  
+      - item_code : 아이템 코드  
+      - item_name : 아이템명  
+      - price : 판매가  
+      - qty : 주문 수량  
+      - order_amount : 주문 금액  
+      - discount_amount : 할인 금액  
+      - paid_amount : 고객 결제 금액  
+
+<br>
+
+### |&nbsp;&nbsp; 데이터 탐색(EDA)으로 인사이트 얻어보기
+
+원래는 로컬 환경에서 분석하는 것을 좋아하지만, 이번엔 Colab을 통해 데이터를 EDA 해봤습니다.
+EDA를 포함한 자세한 분석 및 시각화 코드는  
+제 깃허브의 [Daitda repository](https://github.com/hoon-bari/Daitda/blob/main/notebook/Data_Analysis(Daitda).ipynb)에 있으니 그것을 참고해주세요!
+
+데이터를 살펴보면서 주로 얻은 인사이트는 아래와 같습니다.  
+
+1. 데이터는 2021-01-01 ~ 2021-06-24의 기간, 총 174일의 구매 이력 데이터이다.
+
+1. 최대 1,132번의 주문을 한 고객이 있으며, 하루에 1번 이상의 주문을 한 걸로 볼 수 있는 고객이 7명 있다.  
+  
+2. 여성 고객이 남성에 비해 2.6배 정도로 많다.   
+  
+3. 20~40대의 건강식품 구매비중이 높으며, 20대에서는 또한 가전제품 구매비중이 높다. 50대에서는 레포츠상품의 구매비중이 높다.  
+  
+4. 일반상품의 경우 구매 횟수는 가장 낮지만 평균 가격이 낮아 총 구매 순위에서는 낮은 순위를 차지한다. 반면 가전의 경우 평균 가격이 높으며 총 구매 순위도 가장 크다. 또한 건강식품이 의외로 비싸다.
+
+5. 특정 물품(뷰티제품, 세탁기, 건조기 등)을 꾸준히 구매하는 업자가 존재한다.
+  
+6. 각 달마다 어느 한 날에 매출이 급격히 높아졌다 갑자기 낮아지는 구간이 있다. 이벤트 같은 것을 했을 확률이 높다.   
+  
+7. 40대의 총 매출이 가장 높으며, 50대의 경우는 총 매출 그래프가 우상향하는 경향을 보인다. 70대의 경우는 각 달 별로 가장 많이 구매한 날의 매출이 계속 상승하고 있다.  
+  
+8. 가입기간이 0-1년인 고객이 가장 많으며, 그 다음으로 1-3년인 고객이 많다. 3년 이상의 가입 기간을 가진 장기고객의 비율이 약 7%정도 된다. 
+
+9. 장기고객의 비중은 연령대가 높아질수록 증가하는 추세이며, 장기고객의 수는 50대가 많지만 비중은 60대가 가장 높다.  
+반대로 0-1년차 고객의 경우 10대, 20대에서 비중이 높다.
+  
+10. 1월 달에 0-1년차 고객의 구매비율이 높았던 것을 보아 첫 구매 이벤트 같은 것을 했을 확률이 있다. 또한 2월 말에도 0-1년차와 1-3년차 구매 비율이 역전된 부분이 있는데, 혼수를 장만했다거나 구매 이벤트를 다시 진행했을 확률이 있는 등 여러 가능성이 있다. 살펴볼 필요가 있다.  
+  
+11. 장기고객은 지속적으로 구매를 꾸준히 이어가고 있다. 또한 장기고객의 경우 총 구매액은 인원이 많지 않아서 작지만, 평균 구매액은 1-3년 차를 가끔 넘어서는 모습을 보여준다.   
+  
+12. 0-1년차 고객의 경우 특정일(이벤트 예상) 구매를 많이하는데 그러면서도 평균 구매액이 높다. 20대가 0-1년차에 많이 분포하며 대형제품, 건강식품을 주로 구매한다. 반면 1-3년차에는 30대 이상이 많이 분포한다.
+
+<br>
+
+### |&nbsp;&nbsp; 파레토 차트를 이용한 매출 성장 방안
+
+![pareto](https://github.com/hoon-bari/Recommender_systems/assets/121400054/0637c834-558e-4617-91cd-b963aa14c56d)
+<p align="center">
+  출처 : <a href="https://asana.com/ko/resources/pareto-principle-80-20-rule">https://asana.com/ko/resources/pareto-principle-80-20-rule</a>
+</p>
+
+<br>
+
+매출 성장 방안을 살펴보기 위해 간단하면서도 강력한 방법을 이용해보려고 합니다.  
+바로 파레토 차트입니다. 파레토 법칙을 이용한 차트인데요.  
+파레토 법칙은 결과의 80%가 20%에서 나온다는 개념으로,  
+1896년 이탈리아 경제학자인 Vilfredo Pareto에 의해 고안됐습니다.  
+경제학 뿐만 아니라 비즈니스, 마케팅 등 전체적인 분야에서 나타나서 많이 사용하고 있습니다.  
+
+이것을 가지고 '다잇다'의 상위 20% 고객 매출 비중이 어떻게 되는지 시각화해보겠습니다.  
+원래는 연도별로 분석하는게 일반적인데,  
+저희가 가진 데이터는 반기 데이터이므로 분기 별로 파레토 차트를 그려보려합니다.  
+1분기랑 2분기를 비교해서, 상위 고객이 차지하는 매출 비중을 살펴보겠습니다.  
+
+```python
+df['quarter'] = df['order_date'].dt.quarter
+
+first_quarter = df[df['quarter'] == 1]
+second_quarter = df[df['quarter'] == 2]
+
+# 각 고객별로 주문 수와 결제 금액을 집계
+first_quarter_agg = first_quarter.groupby('customer_no').agg({'paid_amount' : 'sum'})
+second_quarter_agg = second_quarter.groupby('customer_no').agg({'paid_amount' : 'sum'})
+
+# 결제 금액에 따라 내림차순 정렬
+first_quarter_agg = first_quarter_agg.sort_values(by='paid_amount', ascending=False)
+second_quarter_agg = second_quarter_agg.sort_values(by='paid_amount', ascending=False)
+
+# 각 고객의 결제 금액 비율 계산
+first_quarter_agg['amt_percentage'] = first_quarter_agg['paid_amount'] / first_quarter_agg['paid_amount'].sum()
+second_quarter_agg['amt_percentage'] = second_quarter_agg['paid_amount'] / second_quarter_agg['paid_amount'].sum()
+
+# 누적 매출 비율 계산
+first_quarter_agg['cumulative_amt_percentage'] = first_quarter_agg['amt_percentage'].cumsum()
+second_quarter_agg['cumulative_amt_percentage'] = second_quarter_agg['amt_percentage'].cumsum()
+
+# 누적 고객 비중 계산
+first_quarter_agg['cumulative_cust_percentage'] = np.linspace(1/len(first_quarter_agg), 1, len(first_quarter_agg))
+second_quarter_agg['cumulative_cust_percentage'] = np.linspace(1/len(second_quarter_agg), 1, len(second_quarter_agg))
+```
+
+**\[1분기\]**
+
+<img width="1366" alt="first_quarter" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/a1218f61-1829-44cf-903c-d6d8460732b4">
+
+**\[2분기\]**
+
+<img width="1366" alt="Second_quarter" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/81eac5f7-f93d-4c58-8486-b39e0173e826">
+
+
+위 코드는 누적 고객 비중, 누적 매출 비중을 계산하는 코드입니다.  
+고객이 누적됨에 따라 매출 금액이 어떻게 누적되는지 보여주기 위해 만드는데요.  
+위 코드를 실행하면 그림과 같은 결과가 나옵니다.  
+위는 1분기, 아래는 2분기 데이터입니다.   
+
+<br>
+
+```python
+first_q_cust = first_quarter_agg['cumulative_cust_percentage']
+first_q_amt = first_quarter_agg['cumulative_amt_percentage']
+second_q_cust = second_quarter_agg['cumulative_cust_percentage']
+second_q_amt = second_quarter_agg['cumulative_amt_percentage']
+
+x1 = first_q_cust
+y1 = first_q_amt
+x2 = second_q_cust
+y2 = second_q_amt
+
+plt.figure(figsize=(15, 6))
+plt.plot(x1, y1, marker = 'o', label = '1분기')
+plt.plot(x2, y2, marker = 'o', label = '2분기')
+plt.xlabel('누적 고객 비중')
+plt.ylabel('누적 매출 비중')
+plt.xticks(rotation = 25)
+plt.title('1분기 vs 2분기 고객 파레토 차트')
+plt.legend()
+plt.show()
+```
+<br>
+
+**\[결과\]**
+
+![파레토 차트](https://github.com/hoon-bari/Recommender_systems/assets/121400054/36382db3-7b83-46f1-b7dd-b849e410688e)
+
+그리고 이렇게 시각화를 실행하면 파레토 차트가 완성이 됩니다.  
+해당 데이터는 20% 고객이 80% 이상의 매출을 담당하고 있는 파레토 법칙을 아주 잘 보여줍니다.  
+여기서 얻을 수 있는 인사이트 중 가장 중요한 것은,  
+**1분기 대비 2분기에 상위 20% 고객의 매출 기여도가 상승**했다는 점입니다.  
+
+이 추세를 유지 혹은 강화하기 위하여, 
+1. VIP 고객 프로그램 강화(맞춤형 할인, 특별 이벤트 초대, 개인화된 제품 추천 등)를 통해 이들의 충성도를 높이고 재구매를 촉진할 수 있습니다.
+2. 중간 층에 위치한 고객의 up-sell을 고민하여 매출을 성장시킬 수도 있습니다.
+
+<br>
+
+### |&nbsp;&nbsp; 결론
+
+파레토 차트 분석은 누적 고객 비중, 그리고 누적 매출 비중을 그린 후 차트로 나타내는 것이 다이기에 어렵지는 않지만 서비스를 이용하는 고객을 큰 관점에서 볼 때 매우 강력하게 사용될 수 있습니다.   
+또한 서비스의 시간이 경과되면서 충성도 있는 고객이 많아질수록,  
+이 파레토 현상이 두드러진다고 합니다.  
+그래서 과거의 시점과 비교하여,  
+현재 우리 고객의 분포가 어떻게 되는지 파악하는 것이 매우 중요합니다.  
+
+다음 포스팅은 2번째 요청사항이었던,  
+고객 관점에서 구매활동성 증대 방안 인사이트를 도출해보겠습니다.  
+
+<br>
+
+### |&nbsp;&nbsp; Reference
+
+[⓵ 데이터 마케팅 공부방 : https://blog.naver.com/bestinall/222774668272](https://blog.naver.com/bestinall/222774668272)  
+[⓶ https://asana.com/ko/resources/pareto-principle-80-20-rule](https://asana.com/ko/resources/pareto-principle-80-20-rule)  
