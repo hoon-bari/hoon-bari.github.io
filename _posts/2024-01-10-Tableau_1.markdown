@@ -332,6 +332,6 @@ MAKEPOINT([x_좌표, y_좌표, 102748])
 
 #### Reference
 
-[⓵ https://tableauwiki.com/tableau_spatial_join/](https://tableauwiki.com/tableau_spatial_join/)  
-[⓶ https://youngjunyi.github.io/analytics/2020/01/30/spatial-join-in-tableau.html](https://youngjunyi.github.io/analytics/2020/01/30/spatial-join-in-tableau.html)  
+[① https://tableauwiki.com/tableau_spatial_join/](https://tableauwiki.com/tableau_spatial_join/)  
+[② https://youngjunyi.github.io/analytics/2020/01/30/spatial-join-in-tableau.html](https://youngjunyi.github.io/analytics/2020/01/30/spatial-join-in-tableau.html)  
 [③ https://manywisdom-career.tistory.com/2](https://manywisdom-career.tistory.com/2)  

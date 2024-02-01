@@ -392,5 +392,5 @@ ___
 
 #### Reference
 
-⓵[https://github.com/RUCAIBox/RecBole](https://github.com/RUCAIBox/RecBole)  
-⓶[https://mingchin.tistory.com/420](https://mingchin.tistory.com/420)
+[① https://github.com/RUCAIBox/RecBole](https://github.com/RUCAIBox/RecBole)  
+[② https://mingchin.tistory.com/420](https://mingchin.tistory.com/420)

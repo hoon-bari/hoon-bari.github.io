@@ -213,5 +213,7 @@ plt.show()
 
 ### |&nbsp;&nbsp; Reference
 
-[⓵ 데이터 마케팅 공부방 : https://blog.naver.com/bestinall/222774668272](https://blog.naver.com/bestinall/222774668272)  
-[⓶ https://asana.com/ko/resources/pareto-principle-80-20-rule](https://asana.com/ko/resources/pareto-principle-80-20-rule)  
+[① 데이터 마케팅 공부방 : https://blog.naver.com/bestinall/222774668272](https://blog.naver.com/bestinall/222774668272)  
+[② https://asana.com/ko/resources/pareto-principle-80-20-rule](https://asana.com/ko/resources/pareto-principle-80-20-rule)  
+
+
