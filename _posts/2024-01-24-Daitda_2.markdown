@@ -1,0 +1,478 @@
+---
+title: "'다잇다' 시리즈 ② : '다잇다' 홈쇼핑의 고객 관점에서 구매활동성 증대 방안 분석하기"
+excerpt:
+  "지난번엔 '다잇다' 홈쇼핑의 물품 카테고리별 매출 증대 방안을 분석 후 제시했다면,
+  이번엔 고객 관점에서 구매활동성 증대 방안을 분석해보려합니다."
+
+categories:
+      - Data Analysis
+
+tags:
+      - [Tableau, 다잇다, 가상데이터시각화, python]
+
+permalink: /DA/Daitda_2
+
+toc: true
+toc_sticky: true
+
+date: 2024-01-24
+last_modified_at: 2024-01-24
+
+use_math : true
+---
+
+![다잇다2](https://github.com/hoon-bari/Recommender_systems/assets/121400054/02c0f054-b39a-4b2b-9cc6-469c2e725054)
+
+
+지난 번에는 매출 성장 관점에서 파레토 차트를 한번 그려 봤는데요.  
+파레토 차트 말고도 Z-차트라던가 여러 관점에서 볼 수 있지만 이 부분은 나중에 살펴보겠습니다.  
+
+이번에는 고객 관점에서 한 번 살펴보겠습니다.  
+구매 활동성을 어떻게 늘려서 '다잇다' 홈쇼핑에 고객들이 더 방문하게 할 수 있을까요?  
+
+구매 주기 경과 여부에 따라 재구매 유도를 위한 채널 마케팅을 전개할 수도 있지만  
+고객 리텐션을 파악해서 리텐션을 높이기 위한 방안을 모색할 수도 있고요.  
+조금 더 고도화해서 특정 고객 그룹 대상으로 유저 세그먼트를 설계하고 적용할 수 있습니다.  
+
+그 관점에서 오늘 2가지 방법을 살펴보고 '다잇다' 데이터에 적용해보려 합니다.  
+자세한 코드는 [링크](https://github.com/hoon-bari/Daitda/blob/main/notebook/Data_Analysis(%E1%84%83%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%BA%E1%84%83%E1%85%A1).ipynb)에서 확인해주세요!  
+
+<br>
+
+### |&nbsp;&nbsp; RFM 분석
+
+RFM은 아래 세 단어의 약자입니다.
+- Recency : 얼마나 최근에 구매했는가(구매 최근성)
+- Frequency : 얼마나 자주 구매했는가(구매 빈도)
+- Monetary : 얼마나 많은 금액을 지출했는가(구매 금액)
+
+이 개념은 Bult와 Wansbeek에 의해 1990년대에 정립이 됐습니다.  
+(1995년에 이 두 분이 쓴 ['Optimal Selection for Direct Mail'](https://www.researchgate.net/publication/227442110_Optimal_Selection_for_Direct_Mail)이라는 논문에도 RFM 개념이 나옵니다. 한 번 읽어보세요!)  
+
+Recency의 경우 가장 최근에 구매한 고객일수록 재구매율이 높아지고  
+구매 시점이 오래될 수록 재구매율이 낮아진다는 현상에서 착안하여 측정하기 시작했습니다.    
+
+Frequency의 경우 일반적으로 특정 기간 동안의 구매 횟수를 비교하는 변수지만  
+각 기업 마케팅 담당자나 구매 데이터의 특성에 따라 다양하게 사용됩니다.  
+1년을 기준으로 한 고객별 구매 횟수를 사용하기도 하고 총 판매 품목 수량을 보기도 하며,  
+통화 횟수, 입출금 횟수, 외래방문 횟수, 총 구매 수량 등을 사용하기도 한다고 합니다.  
+
+Monetary는 특정 기간 동안의 총 구매 금액의 합계를 볼 수도 있고,  
+총 금액을 고객으로 나누어 주문 당 평균 구매 금액으로 볼 수도 있습니다.  
+
+여기서는 파레토 차트를 만들었을 때와 마찬가지로,  
+RFM을 1분기와 2분기로 나눠서 살펴보려고 합니다.  
+1분기는 1월 1일 ~ 3월 31일, 2분기는 4월 1일 ~ 6월 24일로 나눠 살펴보겠습니다.  
+
+<br>
+
+#### |&nbsp;&nbsp; 1분기, 2분기의 RFM 구하기
+
+1분기와 2분기로 데이터를 나눠서, 각각 RFM을 구해보겠습니다.
+
+```python
+rfm_first_quarter = df.query("'2021-01-01' <= order_date <= '2021-03-31'")
+rfm_second_quarter = df.query("'2021-04-01' <= order_date <= '2021-06-24'")
+
+# 각 기간의 RFM 최근성 기준 측정 기준일
+fq_std_date = max(rfm_first_quarter['order_date']) # 2021-03-31
+sq_std_date = max(rfm_second_quarter['order_date']) # 2021-06-24
+
+# 1분기
+rfm_user_fq = rfm_first_quarter.groupby('customer_no').agg({
+    'order_date': lambda x: (fq_std_date - x.max()).days,
+    'paid_amount': lambda x: x.sum(),
+    'order_no': lambda x: x.nunique()
+})
+
+rfm_user_fq.columns = ['recency', 'monetary', 'frequency']
+
+# 2분기
+rfm_user_sq = rfm_second_quarter.groupby('customer_no').agg({
+    'order_date': lambda x: (sq_std_date - x.max()).days,
+    'paid_amount': lambda x: x.sum(),
+    'order_no': lambda x: x.nunique()
+})
+
+rfm_user_sq.columns = ['recency', 'monetary', 'frequency']
+```
+
+1분기와 2분기 RFM은 각각 아래와 같습니다.  
+
+<img width="1366" alt="스크린샷 2024-02-07 오후 5 30 19(2)" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/6d9c8f2a-23cc-4951-b8f9-8ea1157b3099">
+
+다음은 이 RFM을 가지고 지수 측정을 위해 각 레벨을 부여할 건데요.  
+아래 표처럼 일정 기준으로 스코어를 부여하기 위해,  
+quantile 메서드 및 qcut 함수를 사용해보겠습니다.  
+
+![rfm](https://github.com/hoon-bari/Recommender_systems/assets/121400054/d325d0aa-663d-40c8-ac17-7a10fec283f6)
+<p align="center">
+  출처 : <a href="https://tableauwiki.com/rfm/">태블로로 하는 RFM : https://tableauwiki.com/rfm/</a>
+</p>
+
+<br>
+
+아래처럼 Recency, Monetary, Frequency의 Score를 각각 측정해줍니다.  
+원래는 frequency의 quantile을 1/3, 2/3으로 설정했었는데,  
+1/3도 1, 2/3도 1이어서 분위가 나누어지지 않아 임의로 2/5, 4/5로 설정했습니다.  
+
+```python
+# 1분기
+rfm_user_fq['recency_score'] = pd.qcut(rfm_user_fq['recency'], 3, labels=[3, 2, 1])
+rfm_user_fq['monetary_score'] = pd.qcut(rfm_user_fq['monetary'], 3, labels=[1, 2, 3])
+rfm_user_fq['frequency_score'] = pd.cut(rfm_user_fq['frequency'], bins=[-np.inf, rfm_user_fq['frequency'].quantile(2/5), rfm_user_fq['frequency'].quantile(4/5), np.inf], labels=[1, 2, 3], duplicates='drop')
+
+rfm_user_fq['rm_index'] = rfm_user_fq['recency_score'].astype(str) + rfm_user_fq['monetary_score'].astype(str)
+rfm_user_fq.reset_index(inplace=True)
+
+# 2분기
+rfm_user_sq['recency_score'] = pd.qcut(rfm_user_sq['recency'], 3, labels=[3, 2, 1])
+rfm_user_sq['monetary_score'] = pd.qcut(rfm_user_sq['monetary'], 3, labels=[1, 2, 3])
+rfm_user_sq['frequency_score'] = pd.cut(rfm_user_sq['frequency'], bins=[-np.inf, rfm_user_sq['frequency'].quantile(2/5), rfm_user_sq['frequency'].quantile(4/5), np.inf], labels=[1, 2, 3], duplicates='drop')
+
+rfm_user_sq['rm_index'] = rfm_user_sq['recency_score'].astype(str) + rfm_user_sq['monetary_score'].astype(str)
+rfm_user_sq.reset_index(inplace=True)
+```
+
+각각의 Score를 구하면 아래와 같은 표가 나오게 됩니다.
+
+<img width="1366" alt="스크린샷 2024-02-07 오후 5 51 02(2)" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/b5314046-4aa6-4118-8924-68993c4945e7">
+
+<br>
+
+
+이제부터는 Recency, Monetary, Frequency 각각의 구간을  
+1, 2분기 별로 비교해보겠습니다.  
+
+```python
+# 각 스코어별 기준 라인 비교
+## recency_score
+print("2021년 3월 기준 Recency 스코어 구간")
+print(rfm_user_fq.groupby(['recency_score'])['recency'].min().reset_index())
+print()
+print("2021년 6월 기준 Recency 스코어 구간")
+print(rfm_user_sq.groupby(['recency_score'])['recency'].min().reset_index())
+```
+<p align="center">
+      <img width="400" alt="스크린샷 2024-02-07 오후 5 56 52" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/51b832f9-fe44-40c2-bb65-f899e2a0bd58">
+</p>
+
+1분기에 비해 2분기의 Recency 구간이 전반적으로 더 길어졌습니다.  
+최신성이 떨어진 것을 알 수 있습니다.  
+
+```python
+# 각 스코어별 기준 라인
+## monetary_score
+print("2021년 3월 기준 Monetary 스코어 구간")
+print(rfm_user_fq.groupby(['monetary_score'])['monetary'].min().reset_index())
+print()
+print("2021년 6월 기준 Monetary 스코어 구간")
+print(rfm_user_sq.groupby(['monetary_score'])['monetary'].min().reset_index())
+```
+<p align="center">
+      <img width="400" alt="스크린샷 2024-02-07 오후 6 01 57" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/b541fa46-39f0-42c6-bfd7-6dd8ed6630e1">
+</p>
+
+Monetary도 1분기에 비해 2분기의 수준이 전반적으로 떨어졌습니다.  
+특히 score 2의 Monetary가 8,100 정도로 가장 크게 떨어진 것을 볼 수 있습니다.  
+
+앞에서 파레토 차트로 봤을 때는 1분기 대비 2분기 상위 20%의 매출이 상승했었는데,  
+이렇게 RFM Score로 보니 각각의 분위에서는 전부 2분기의 매출 구간 기준이 떨어졌네요.
+
+```python
+# 각 스코어별 기준 라인
+## frequency_score
+print("2021년 3월 기준 Frequency 스코어 구간")
+print(rfm_user_fq.groupby(['frequency_score'])['frequency'].min().reset_index())
+print()
+print("2021년 6월 기준 Frequency 스코어 구간")
+print(rfm_user_sq.groupby(['frequency_score'])['frequency'].min().reset_index())
+```
+<p align="center">
+      <img width="400" alt="스크린샷 2024-02-07 오후 6 05 50" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/3ea54af9-b359-4539-be94-222bf320ea24">
+</p>
+
+구매 빈도인 Frequency의 경우는 차이가 없는 것을 확인할 수 있습니다.  
+Frequency를 제외한 Recency와 Monetary를 기준으로,   
+RM index를 만들어 그것을 바탕으로 각 고객 수를 집계하겠습니다.  
+RM index를 만드는 코드는 미리 반영이 돼있습니다.  
+
+```python
+# RM index를 기준으로 고객 수 계산
+rm_index_fq = rfm_user_fq.groupby('rm_index')['customer_no'].nunique().reset_index().rename({'customer_no':'customer_count'}, axis=1)
+rm_index_sq = rfm_user_sq.groupby('rm_index')['customer_no'].nunique().reset_index().rename({'customer_no':'customer_count'}, axis=1)
+```
+
+고객 수는 아래와 같이 나오게 됩니다.  
+
+<img width="1366" alt="스크린샷 2024-02-07 오후 7 01 56(2)" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/aee612c9-ad5b-4076-a5ba-2ff901256f0e">
+
+32, 33, 23등 최신성 높고 구매금액 높인 인원들의 수가 많아진게 고무적이지만,  
+동시에 11, 12등 최신성 낮은 인원들의 수도 많아진 것을 확인할 수 있습니다.  
+
+이 고객의 카테고리를 RM index를 가지고 나눠보겠습니다.  
+
+```python
+def categorize_customer(score):
+    if score == '33' :
+        return '1_최우수'
+    elif score in ['32', '23', '22']:
+        return '2_우수'
+    elif score in ['12', '13']:
+        return '3_윈백대상'
+    elif score in ['31', '21']:
+        return '4_최신성존재_구매필요'
+    elif score in ['11']:
+        return '5_휴면'
+
+rm_index_fq['category'] = rm_index_fq['rm_index'].apply(categorize_customer)
+rm_index_sq['category'] = rm_index_sq['rm_index'].apply(categorize_customer)
+```
+
+그러면 아래처럼 고객 세그먼트가 생기게 됩니다.  
+
+<img width="1366" alt="스크린샷 2024-02-07 오후 7 09 56(2)" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/fa54d8ab-642f-4002-8f63-c5c978f35e3a">
+
+그리고 이 세그먼트를 바탕으로,  
+1분기와 2분기의 세그먼트별 인원을 plotly 트리맵을 가지고 비교해보겠습니다.  
+
+```python
+# 두 개의 데이터 프레임을 하나의 subplot으로 합치기
+fig = make_subplots(rows=1, cols=2, subplot_titles=['2021년 3월 기준 RM 세그먼트 단위 고객 수 현황', '2021년 6월 기준 RM 세그먼트 단위 고객 수 현황'], specs=[[{"type": "treemap"}, {"type": "treemap"}]])
+
+# 1번째 subplot에 데이터 추가
+trace1 = px.treemap(
+    rm_index_fq,
+    path=['category'],
+    values='customer_count',
+    color='customer_count'
+)
+for i in trace1.data:
+    i.hovertemplate = '%{label}<br>고객 수: %{value}'
+    fig.add_trace(i, row=1, col=1)
+
+# 2번째 subplot에 데이터 추가
+trace2 = px.treemap(
+    rm_index_sq,
+    path=['category'],
+    values='customer_count',
+    color='customer_count'
+)
+for j in trace2.data:
+    j.hovertemplate = '%{label}<br>고객 수: %{value}'
+    fig.add_trace(j, row=1, col=2)
+
+fig.update_layout(title_text='RM 세그먼트 단위 고객 수 현황', showlegend=False)
+
+fig.show()
+```
+
+![newplot](https://github.com/hoon-bari/Recommender_systems/assets/121400054/009f73d2-6696-4101-8d8a-84ff790414f0)
+
+트리맵으로 두 집단(혹은 비교대상)을 비교했을 때 장점은 어떤 부분이 주로 변화했는지  
+색상을 통해 확인이 가능하다는 점입니다.  
+최우수, 우수 고객층이 1분기 대비 2분기에 늘어났다는 점에서,  
+이전 포스팅에서의 파레토 차트 매출 상승 부분이 설명이 가능하지만  
+동시에 4번 고객층(구매가 더 필요)도 늘었으며 휴면유저도 늘어난 것이 보입니다.  
+**이런식으로 RFM 분석을 통해 각 세그먼트별 마케팅 전략을 다르게 짤 수 있습니다.**  
+
+<br>
+
+추가적으로 RFM을 가지고 전체적인 고객의 분포를 살펴볼 수 있는 차트가 있는데요.  
+바로 **teranry chart**입니다.  
+삼각형을 기준으로 3개의 축의 고객 세그먼트를 볼 수 있습니다.  
+
+아래는 Tableau 전문가이신 전서연 강사님의 글에서 가져온 ternary chart인데요.  
+RFM 세그먼트에 따라 차트에서 세그먼트가 한 눈에 띄는 것을 볼 수 있습니다.  
+
+![ternary_chart](https://github.com/hoon-bari/Recommender_systems/assets/121400054/230e7a38-6520-4be4-8962-a4c6278d12f2)
+<p align="center">
+  출처 : <a href="https://tableauwiki.com/rfm/">태블로로 하는 RFM : https://tableauwiki.com/rfm/</a>
+</p>
+
+<br>
+
+Python에서는 Plotly로 아래처럼 코드를 짜서 ternary chart를 볼 수 있습니다.  
+
+```python
+rfm_user_fq_2 = rfm_user_fq.copy()
+
+rfm_user_fq_2['rfm_index'] = rfm_user_fq_2['recency_score'].astype(str) + rfm_user_fq_2['monetary_score'].astype(str) + rfm_user_fq_2['frequency_score'].astype(str)
+
+fig = px.scatter_ternary(rfm_user_fq_2, a="recency", b="monetary", c="frequency",
+                         color="rfm_index", size_max=15,
+                         hover_name="customer_no",
+                         color_continuous_scale=px.colors.sequential.Viridis)
+
+fig.update_layout(title='1분기 RFM Ternary Chart')
+
+fig.show()
+```
+
+![plotly_rfm](https://github.com/hoon-bari/Recommender_systems/assets/121400054/21976e77-5046-4176-9344-4109a31e2e81)
+
+여기서는 Frequency의 변별력이 없어 잘 드러나지 않지만,  
+상황에 따라 정말 강력한 차트가 될 수 있습니다.  
+
+<br>
+
+#### |&nbsp;&nbsp; RFM에 가중치 반영해보기
+
+위에서 RFM 세그먼트를 할 때는 가중치를 계산하지 않았었는데,  
+이번엔 현업에서 하는 것 처럼 가중치를 적용하여 종합 스코어를 계산해보겠습니다.  
+가중치는 분석가의 판단에 의합니다.  
+'다잇다'의 데이터에서 이전 기준점과 변별력 차이가 없는 Frequency의 가중치는 줄이고,  
+Monetary와 Recency 비중을 높여 계산해보겠습니다.  
+
+```python
+# 1분기
+rfm_user_fq['overall_score'] = rfm_user_fq['recency_score'].astype(int)*0.4 + rfm_user_fq['monetary_score'].astype(int)*0.4 + rfm_user_fq['frequency_score'].astype(int)*0.2
+# 2분기
+rfm_user_sq['overall_score'] = rfm_user_sq['recency_score'].astype(int)*0.4 + rfm_user_sq['monetary_score'].astype(int)*0.4 + rfm_user_sq['frequency_score'].astype(int)*0.2
+```
+
+이렇게 하면 아래처럼 고객별 Overall Score가 계산됩니다.  
+
+<img width="1366" alt="스크린샷 2024-02-07 오후 7 39 38(2)" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/44c12dd6-d4cf-4fe9-aa3e-e798d9afa07f">
+
+이걸 가지고 1분기 대비 2분기의 Overall Score가 하락한 고객을 찾아보고,  
+이 고객들을 대상으로 마케팅을 할 수도 있습니다.  
+아니면 상승고객을 대상으로 Up-Selling을 할 수도 있습니다.  
+
+```python
+# 오버롤 비교 데이터프레임 생성 (양 기간 비교를 위해 inner join으로 연결)
+merged_df = pd.merge(rfm_user_fq[['customer_no', 'overall_score']], rfm_user_sq[['customer_no', 'overall_score']], on='customer_no', how='inner')
+merged_df = merged_df.rename(columns={'overall_score_x': 'now_score', 'overall_score_y': 'before_score'})
+merged_df['score_status'] = np.where(merged_df['now_score'] > merged_df['before_score'], '1_상승',
+                                     np.where(merged_df['now_score'] == merged_df['before_score'], '2_동일', '3_하락'))
+
+# 상태별 고객 수 확인
+score_stat = merged_df.groupby(['score_status'])['customer_no'].nunique().reset_index().rename({'customer_no':'고객 수'}, axis=1)
+
+# 고객 수 합계 추가
+score_stat = score_stat.append({'score_status': 'Total', '고객 수': score_stat['고객 수'].sum()}, ignore_index=True)
+```
+
+<img width="1366" alt="스크린샷 2024-02-07 오후 7 46 00(2)" src="https://github.com/hoon-bari/Recommender_systems/assets/121400054/052cdb41-4e38-439f-bb11-9dcb47e58283">
+
+<br>
+
+이런 식으로 RFM 분석은,  
+- 고객 세그먼트 : RFM 각 변수에 따라 고객을 분류하여, 차별화된 마케팅을 위한 고객 세분화에 활용  
+- 고객 평가 : 각 고객의 RFM 지수를 산출하여 고객을 평가하는 지수로 활용(Scoring을 통해 등급을 부여)의 방향에서 활용할 수 있습니다.  
+
+<br>
+
+### |&nbsp;&nbsp; 코호트 분석
+
+코호트는 공통적인 특성이나 경험을 공유하는 개인들의 그룹입니다.  
+그리고 코호트 분석은 동일한 기간동안 동일한 특성을 가진 사람들을 모아 분석하는 것을 의미합니다.   
+일종의 '행동 분석' 방법인데요.  
+질병에 대해 추적하거나, 비즈니스의 장기 수익률을 이해/예측하는 등 다양한 분야에서 사용합니다.  
+그리고 마케팅 관련해서는, 리텐션(retention)을 측정하는데 코호트를 자주 사용합니다.  
+
+AARRR 중에서 가장 중요하다고 해도 과언이 아닌 리텐션은,  
+제품의 첫 번째 사용 시점 이후 일정 기간이 지난 시점에 재사용하는 고객의 비율을 구해서 보는데요.  
+재방문율, 잔존율과 동의어로 사용되기도 합니다.  
+
+이번엔 구매 활동성 측정을 위해 코호트 분석을 통해 리텐션을 보려고 하는데요.  
+'다잇다'의 데이터가 6개월로 짧은 편이라, 여기서는 월로 하되 나중에 주별로도 보려고 합니다.  
+
+우선 Retention 측정의 베이스가 되는 데이터프레임을 만들어보고,  
+1월에 구매한 인원의 2월 리텐션만 구해보겠습니다.  
+
+```python
+retention_base = df[['customer_no', 'order_no', 'order_date']].drop_duplicates(subset=['order_no'])
+retention_base['ord_ym'] = retention_base['order_date'].dt.to_period('M')
+
+ord_ym_list = sorted(list(retention_base['ord_ym'].unique()))
+
+period_start = ord_ym_list[0]
+period_target = ord_ym_list[1]
+
+period_start_users = set(retention_base.query('ord_ym == @period_start')['customer_no'])
+period_target_users = set(retention_base.query('ord_ym == @period_target')['customer_no'])
+
+retained_users = period_start_users.intersection(period_target_users)
+
+retention_rate = len(retained_users)/len(period_start_users)
+print(retention_rate) # 0.1976332...
+```
+
+1월에 구매한 인원의 2월 리텐션은 약 20% 정도입니다.  
+이렇게 구하는 방식을 응용해서, 각 기간의 리텐션을 구해본 다음 plotly로 시각화하겠습니다.  
+(전체적인 코드는 맨 처음에 올린 링크를 참고해주세요!)
+
+```python
+retention = pd.DataFrame()
+for s in tqdm(ord_ym_list):
+    for t in ord_ym_list:
+        period_start = s
+        period_target = t
+
+        if period_start <= period_target:
+            period_start_users = set(retention_base.query('ord_ym == @period_start')['customer_no'])
+            period_target_users = set(retention_base.query('ord_ym == @period_target')['customer_no'])
+
+            # 잔존 유저 리스트
+            retained_users = period_start_users.intersection(period_target_users)
+            # 구매 리텐션율
+            retention_rate = len(retained_users)/len(period_start_users)
+
+            temp = pd.DataFrame({'cohort':[period_start], 'ord_ym':[period_target], 'retention_rate':[retention_rate]})
+
+            retention = pd.concat([retention, temp])
+
+retention['cohort_size(month)'] = retention.apply(lambda x: (x['ord_ym'] - x['cohort']).n, axis = 1)
+retention['cohort'] = retention['cohort'].astype(str)
+retention['ord_ym'] = retention['ord_ym'].astype(str)
+
+retention_final = pd.pivot_table(data=retention, index='cohort', columns='cohort_size(month)', values='retention_rate')
+
+fig = px.imshow(retention_final, text_auto='.1%', color_continuous_scale='Burg')
+fig.show()
+```
+
+위 코드를 실행하면 아래와 같은 코호트 분석 차트가 나오게 됩니다.  
+
+![cohort](https://github.com/hoon-bari/Recommender_systems/assets/121400054/123f9d13-5ca8-442d-9009-1a4aacdc0327)
+
+여기서 얻을 수 있는 인사이트는,
+- 1월 대비 2월에 M+1, M+2, M+3, M+4 리텐션이 모두 크고, M+1 리텐션은 3월에 가장 크게 나타납니다.
+- ~ M+3까지의 리텐션의 경우, 모두 증가하다 떨어지는 추세를 보입니다.
+- 1월은 다른 달에 비해 M+1 리텐션이 떨어지고 있습니다. 1월에 가입기간 0~1년 고객의 구매가 많았다는 점을 EDA간 언급했는데, 그것이 반영된 듯 합니다. 
+- 대각선 방향으로 보면, 이탈율이 전반적으로 증가하고 있습니다. 이는 아래 리텐션 커브에 더 잘 나타납니다. 리텐션을 유지하기 위한 대책들이 필요해 보입니다.
+
+```python
+# retention curve
+retention_curve = retention.groupby('cohort_size(month)')[['retention_rate']].mean().reset_index()
+fig = px.line(data_frame = retention_curve, x='cohort_size(month)', y='retention_rate', title = 'Retention Curve')
+fig.update_yaxes(tickformat='.1%')
+fig.show()
+```
+
+![Retention_Curve](https://github.com/hoon-bari/Recommender_systems/assets/121400054/69fa59cc-8761-4a7a-a5a4-af647624a55d)
+
+<br>
+
+### |&nbsp;&nbsp; 결론
+
+이상으로 RFM 분석과 코호트 분석을 통해,
+'다잇다' 고객의 구매 활동성 증대 방안 제시를 위한 분석을 진행해봤습니다.  
+
+1. 최우수, 우수 고객층이 1분기 대비 2분기에 늘어났다는 점에서 이 증가 추세를 유지 혹은 가속하기 위한 방안(Up-Selling, Cross-Selling 등) 강구
+2. 4번 고객층(구매가 더 필요) 및 휴면유저의 복귀 방안(쿠폰 등 혜택) 강구
+3. 이탈율을 줄이고 유지율을 강화하기 위한 방안 강구
+
+아마 이 정도가 될 것 같습니다.  
+
+다음에는 '다잇다' 고객이 관심있을만한 아이템을 추천하는 방식을 주제로 포스팅해보겠습니다.
+
+<br>
+
+#### |&nbsp;&nbsp; Reference
+
+[① https://tableauwiki.com/rfm/](https://tableauwiki.com/rfm/)  
+[② https://blog.naver.com/bestinall/221672243147](https://blog.naver.com/bestinall/221672243147)  
+[③ https://ifdo.co.kr/blog/BlogView.apz?BlogNo=161](https://ifdo.co.kr/blog/BlogView.apz?BlogNo=161) 
+[④ https://www.relate.kr/docs/wiki/upsell-cross-sell](https://www.relate.kr/docs/wiki/upsell-cross-sell)   
