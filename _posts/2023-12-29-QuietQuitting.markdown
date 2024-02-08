@@ -54,7 +54,7 @@ use_math : true
 조용한 사직이 유행하기 전부터 이런 생각이 대부분을 차지하고 있었으니,  
 조용한 사직이 유행하는 것은 어찌보면 필연이었다고 생각합니다.  
   
-![HR](https://github.com/hoon-bari/ByteDegree/assets/121400054/18961f0d-4011-400f-8dba-86f64724c246)
+![HR](https://github.com/hoon-bari/FastCampus-Data-Analytics-Project/assets/121400054/a8742a08-2b94-469e-ad7c-068d03fef7c4)
   
 <br>
 
